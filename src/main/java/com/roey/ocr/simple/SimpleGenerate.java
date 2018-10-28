@@ -22,10 +22,10 @@ public class SimpleGenerate {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, 180);
         List<FontRange> fontRanges = Division.divideFont(image);
-        String date = LocalDate.now().toString().replace("-","");
+        String date = LocalDate.now().toString().replace("-", "");
         String preFilePath = "E:\\" + date + "\\" + date;
         for (int i = 0; i < fontRanges.size(); i++) {
-            BufferedImage fontImage = image.getSubimage(fontRanges.get(i).getX1(), fontRanges.get(i).getY1(), fontRanges.get(i).getX2() - fontRanges.get(i).getX1(), fontRanges.get(i).getY2() - fontRanges.get(i).getY1());
+            BufferedImage fontImage = image.getSubimage(fontRanges.get(i).getX1(), fontRanges.get(i).getY1(), fontRanges.get(i).getWidth(), fontRanges.get(i).getHeight());
             ImageIO.write(fontImage, "png", new File(preFilePath + +i + ".png"));
         }
     }

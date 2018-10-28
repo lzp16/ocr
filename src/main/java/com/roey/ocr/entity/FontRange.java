@@ -44,4 +44,12 @@ public class FontRange {
     public void setY2(int y2) {
         this.y2 = y2;
     }
+
+    public int getWidth() {
+        return x2 - x1 + 1;
+    }
+
+    public int getHeight() {
+        return y2 - y1 + 1;
+    }
 }

@@ -4,16 +4,18 @@ import com.roey.ocr.entity.Cell;
 import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.simple.SimpleLoad;
+import com.roey.ocr.util.ImageHandleUtil;
+import com.roey.ocr.util.ImageShowUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static com.roey.ocr.algorithm.PixelContrast.contrastPixel;
-import static com.roey.ocr.util.CommonUtil.extMatrix;
 import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
 
 /**
@@ -46,11 +48,7 @@ public class Analysis {
     }
 
     public static String analysisFont(BufferedImage image, FontRange fontRange) {
-        int x1 = fontRange.getX1();
-        int y1 = fontRange.getY1();
-        int x2 = fontRange.getX2();
-        int y2 = fontRange.getY2();
-        BufferedImage fontImage = image.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+        BufferedImage fontImage = image.getSubimage(fontRange.getX1(), fontRange.getY1(), fontRange.getWidth(), fontRange.getHeight());
 //        ImageShowUtil.img(fontImage);
         int[][] unknownFontData = getFontImageMatrix(fontImage);
         int score = 0;
@@ -74,32 +72,13 @@ public class Analysis {
     }
 
     public static void main(String[] args) throws IOException {
-        int[][] a = new int[3][3];
-        a[0][0] = 1;
-        a[0][1] = 0;
-        a[0][2] = 1;
-
-        a[1][0] = 1;
-        a[1][1] = 0;
-        a[1][2] = 1;
-
-        a[2][0] = 1;
-        a[2][1] = 0;
-        a[2][2] = 1;
-
-        int[][] ints = extMatrix(a, 5, 4);
-        for (int i = 0; i < ints.length; i++) {
-            System.out.println(Arrays.toString(ints[i]));
+        BufferedImage image = ImageIO.read(new File("C:\\Users\\LiZhanPing\\Desktop\\ocr\\huangshi\\huangshi_2.png"));
+//        BufferedImage image = ImageIO.read(new File("E:\\chifeng_1.png"));
+        image = ImageHandleUtil.binaryImage(image, 180);
+        ImageShowUtil.img(image);
+        List<List<String>> lists = analysisTable(image);
+        for (int i = 0; i < lists.size(); i++) {
+            System.out.println(lists.get(i));
         }
-
-//        loadSimpleData();
-//        BufferedImage image = ImageIO.read(new File("C:\\Users\\LiZhanPing\\Desktop\\ocr\\huangshi\\huangshi_2.png"));
-////        BufferedImage image = ImageIO.read(new File("E:\\chifeng_1.png"));
-//        image = ImageHandleUtil.binaryImage(image, 180);
-//        ImageShowUtil.img(image);
-//        List<List<String>> lists = analysisTable(image);
-//        for (int i = 0; i < lists.size(); i++) {
-//            System.out.println(lists.get(i));
-//        }
     }
 }

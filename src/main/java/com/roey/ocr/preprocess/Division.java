@@ -84,42 +84,6 @@ public class Division {
         return cells;
     }
 
-//    public static Font[][][] divideCellByDef(BufferedImage image) {
-//        int[] horizontalProjections = ImageHandleUtil.imageProjection(image, 0);
-//        int maxFontHeight = getMaxLen(horizontalProjections, 1, Integer.MAX_VALUE);
-//        int minFontHeight = getMinLen(horizontalProjections, 1, 1);
-//        int mdFontHeight = (maxFontHeight + minFontHeight) / 2;
-//        int minRowSpace = getMinLen(horizontalProjections, 0, 0);
-//        LinkedHashMap<Integer, Integer> integerIntegerLinkedHashMap = ImageHandleUtil.divideProjectionWave(horizontalProjections, 1, mdFontHeight, minRowSpace);
-//        Object[] objects = integerIntegerLinkedHashMap.entrySet().toArray();
-//        int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0,,image.getWidth(),), 1);
-//        int maxFontWidth = getMaxLen(verticalProjections, 1, Integer.MAX_VALUE);
-//        int minFontWidth = getMinLen(verticalProjections, 1, 1);
-//        int mdFontWidth = (maxFontWidth + minFontWidth) / 2;
-//        int minColumnSpace = getMinLen(verticalProjections, 0, mdFontWidth);
-//        divideCell(image, minColumnSpace, minRowSpace, mdFontWidth, mdFontHeight);
-//    }
-
-//    public static Font[][][] divideTable(BufferedImage image, int columnSpace, int rowSpace, int fontWidth, int fontHeight) {
-//        int[] horizontalProjections = ImageHandleUtil.imageProjection(image, 1);
-//        LinkedHashMap<Integer, Integer> verticalCharacterBorder = ImageHandleUtil.divideProjectionWave(horizontalProjections, 1, fontHeight, rowSpace);
-//        List<FontRange> list = new ArrayList<>();
-//        verticalCharacterBorder.forEach((k, v) -> {
-//            int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0, k, image.getWidth(), v - k), 0);
-//            LinkedHashMap<Integer, Integer> horizontalCharacterBorder = ImageHandleUtil.divideProjectionWave(verticalProjections, 1, 1, columnSpace);
-//            horizontalCharacterBorder.forEach((key, value) -> {
-//                FontRange fontRange = new FontRange();
-//                fontRange.setX1(key);
-//                fontRange.setX2(value);
-//                fontRange.setY1(k);
-//                fontRange.setY2(v);
-//                list.add(fontRange);
-//            });
-//        });
-//        return null;
-//    }
-
-
     /**
      * 获取数组中指定数字相连的最小长度，可以指定最小值的边界且最小值是大于边界值的
      *
