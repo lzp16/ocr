@@ -3,18 +3,14 @@ package com.roey.ocr.pageAnalysis;
 import com.roey.ocr.entity.Cell;
 import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.preprocess.Division;
-import com.roey.ocr.util.ImageHandleUtil;
-import com.roey.ocr.util.ImageShowUtil;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.roey.ocr.util.ImageHandleUtil.getFontData;
 
 /**
  * description
@@ -73,6 +69,13 @@ public class Analysis {
         return result;
     }
 
+    /**
+     * 以图片左下角为原点进行像素对比
+     *
+     * @param simpleData
+     * @param unknowData
+     * @return
+     */
     public static int contrastPixel(int[][] simpleData, int[][] unknowData) {
 //        System.out.println(">>>>>>>>>simpleData>>>>>>>>>>>");
 //        for (int i = 0; i < simpleData.length; i++) {
@@ -82,73 +85,60 @@ public class Analysis {
 //        for (int i = 0; i < unknowData.length; i++) {
 //            System.out.println(Arrays.toString(unknowData[i]));
 //        }
-        if (Math.abs(simpleData.length - unknowData.length + simpleData[0].length - unknowData[0].length) > 5) {
+        if (Math.abs(simpleData.length - unknowData.length + simpleData[0].length - unknowData[0].length) > 2) {
             return Integer.MAX_VALUE;
         }
         int result = 0;
         int row;
         int column;
-        if (simpleData.length > unknowData.length) {
-            row = unknowData.length;
-        } else {
+        if (simpleData.length >= unknowData.length) {
             row = simpleData.length;
-        }
-        if (simpleData[0].length > unknowData[0].length) {
-            column = unknowData[0].length;
         } else {
-            column = simpleData[0].length;
+            row = unknowData.length;
         }
+        if (simpleData[0].length >= unknowData[0].length) {
+            column = simpleData[0].length;
+        } else {
+            column = unknowData[0].length;
+        }
+        int[][] simpleDataExt = extMatrix(simpleData, row, column);
+        int[][] unknowDataExt = extMatrix(unknowData, row, column);
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                if (simpleData[i][j] != unknowData[i][j]) {
+                if (simpleDataExt[i][j] != unknowDataExt[i][j]) {
                     result++;
                 }
             }
         }
-        if (simpleData.length > row) {
-            for (int i = row; i < simpleData.length; i++) {
-                for (int j = 0; j < simpleData[i].length; j++) {
-                    if (simpleData[i][j] == 1) {
-                        result++;
-                    }
+        return result;
+    }
+
+    /**
+     * 以左下角为原点填充到需要的矩阵
+     *
+     * @param m
+     * @param row
+     * @param column
+     * @return
+     */
+    public static int[][] extMatrix(int[][] m, int row, int column) {
+        if (m.length > row) {
+            row = m.length;
+        }
+        if (m[0].length > column) {
+            column = m[0].length;
+        }
+        int[][] result = new int[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (i >= (row - m.length) && j <= m[i - (row - m.length)].length - 1) {
+                    result[i][j] = m[i - (row - m.length)][j];
+                } else {
+                    result[i][j] = 0;
                 }
             }
         }
-        if (simpleData[0].length > column) {
-            for (int i = column; i < simpleData[0].length; i++) {
-                for (int j = 0; j < simpleData.length; j++) {
-                    if (simpleData[j][i] == 1) {
-                        result++;
-                    }
-                }
-            }
-        }
-        if (unknowData.length > row) {
-            for (int i = row; i < unknowData.length; i++) {
-                for (int j = 0; j < unknowData[i].length; j++) {
-                    if (unknowData[i][j] == 1) {
-                        result++;
-                    }
-                }
-            }
-        }
-        if (unknowData[0].length > column) {
-            for (int i = column; i < unknowData[0].length; i++) {
-                for (int j = 0; j < unknowData.length; j++) {
-                    if (unknowData[j][i] == 1) {
-                        result++;
-                    }
-                }
-            }
-        }
-        int diff = 0;
-        if (simpleData.length > row && simpleData[0].length > column) {
-            diff = (simpleData.length - row) * (simpleData[0].length - column);
-        }
-        if (unknowData.length > row && unknowData[0].length > column) {
-            diff = (unknowData.length - row) * (unknowData[0].length - column);
-        }
-        return result - diff;
+        return result;
     }
 
     public static void loadSimpleData() throws IOException {
@@ -237,11 +227,8 @@ public class Analysis {
         File[] files = rootFile.listFiles();
         try {
             for (int i = 0; i < files.length; i++) {
-//                boolean isAvl = files[i].getAbsolutePath().contains("png")||files[i].getAbsolutePath().contains("jpg");
-//                if (isAvl) {
                 BufferedImage image = ImageIO.read(files[i]);
                 result.add(getFontData(image));
-//                }
             }
         } catch (Exception e) {
             System.out.println(path);
@@ -249,59 +236,34 @@ public class Analysis {
         return result;
     }
 
-    public static int[][] getFontData(BufferedImage image) {
-        int[] hp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
-        int[] vp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.VERTICAL);
-        int x1 = edgeDetection(vp, true);
-        int x2 = edgeDetection(vp, false);
-        int y1 = edgeDetection(hp, true);
-        int y2 = edgeDetection(hp, false);
-        image = image.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-        int w = image.getWidth();
-        int h = image.getHeight();
-        int[][] data = new int[h][w];
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                if (image.getRGB(j, i) != Color.BLACK.getRGB()) {
-                    data[i][j] = 0;
-                } else {
-                    data[i][j] = 1;
-                }
-            }
-
-        }
-        return data;
-    }
-
-    public static int edgeDetection(int[] data, boolean left) {
-        int result = 0;
-        if (left) {
-            for (int i = 0; i < data.length; i++) {
-                if (data[i] != 0) {
-                    result = i;
-                    break;
-                }
-            }
-        } else {
-            for (int i = data.length - 1; i >= 0; i--) {
-                if (data[i] != 0) {
-                    result = i;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
 
     public static void main(String[] args) throws IOException {
-        loadSimpleData();
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_2.png"));
-//        BufferedImage image = ImageIO.read(new File("E:\\chifeng_1.png"));
-        image = ImageHandleUtil.binaryImage(image, 180);
-        ImageShowUtil.img(image);
-        List<List<String>> lists = analysisTable(image);
-        for (int i = 0; i < lists.size(); i++) {
-            System.out.println(lists.get(i));
+        int[][] a = new int[3][3];
+        a[0][0] = 1;
+        a[0][1] = 0;
+        a[0][2] = 1;
+
+        a[1][0] = 1;
+        a[1][1] = 0;
+        a[1][2] = 1;
+
+        a[2][0] = 1;
+        a[2][1] = 0;
+        a[2][2] = 1;
+
+        int[][] ints = extMatrix(a, 5, 4);
+        for (int i = 0; i < ints.length; i++) {
+            System.out.println(Arrays.toString(ints[i]));
         }
+
+//        loadSimpleData();
+//        BufferedImage image = ImageIO.read(new File("C:\\Users\\LiZhanPing\\Desktop\\ocr\\huangshi\\huangshi_2.png"));
+////        BufferedImage image = ImageIO.read(new File("E:\\chifeng_1.png"));
+//        image = ImageHandleUtil.binaryImage(image, 180);
+//        ImageShowUtil.img(image);
+//        List<List<String>> lists = analysisTable(image);
+//        for (int i = 0; i < lists.size(); i++) {
+//            System.out.println(lists.get(i));
+//        }
     }
 }

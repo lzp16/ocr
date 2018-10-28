@@ -372,6 +372,51 @@ public class ImageHandleUtil {
         return mergeImage(true, bufferedImages);
     }
 
+    public static int[][] getFontData(BufferedImage image) {
+        int[] hp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
+        int[] vp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.VERTICAL);
+        int x1 = edgeDetection(vp, true);
+        int x2 = edgeDetection(vp, false);
+        int y1 = edgeDetection(hp, true);
+        int y2 = edgeDetection(hp, false);
+        image = image.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+        int w = image.getWidth();
+        int h = image.getHeight();
+        int[][] data = new int[h][w];
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                if (image.getRGB(j, i) != Color.BLACK.getRGB()) {
+                    data[i][j] = 0;
+                } else {
+                    data[i][j] = 1;
+                }
+            }
+
+        }
+        return data;
+    }
+
+    public static int edgeDetection(int[] data, boolean left) {
+        int result = 0;
+        if (left) {
+            for (int i = 0; i < data.length; i++) {
+                if (data[i] != 0) {
+                    result = i;
+                    break;
+                }
+            }
+        } else {
+            for (int i = data.length - 1; i >= 0; i--) {
+                if (data[i] != 0) {
+                    result = i;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+
     public static void main(String[] args) throws Exception {
         BufferedImage image1 = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\chifeng\\chifeng_1.png"));
         image1 = binaryImage(image1, 180);
