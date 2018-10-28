@@ -5,7 +5,7 @@ import static com.roey.ocr.util.CommonUtil.extMatrix;
 /**
  * Created by LiZhanPing on 2018/10/29.
  */
-public class ContrastPixel {
+public class PixelContrast {
     /**
      * 以图片左下角为原点进行像素对比
      *

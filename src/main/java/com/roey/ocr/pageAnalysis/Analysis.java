@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.roey.ocr.algorithm.ContrastPixel.contrastPixel;
+import static com.roey.ocr.algorithm.PixelContrast.contrastPixel;
 import static com.roey.ocr.util.CommonUtil.extMatrix;
 import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
 
