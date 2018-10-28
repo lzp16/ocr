@@ -372,7 +372,7 @@ public class ImageHandleUtil {
         return mergeImage(true, bufferedImages);
     }
 
-    public static int[][] getFontData(BufferedImage image) {
+    public static int[][] getFontImageMatrix(BufferedImage image) {
         int[] hp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
         int[] vp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.VERTICAL);
         int x1 = edgeDetection(vp, true);

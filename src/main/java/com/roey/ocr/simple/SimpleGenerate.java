@@ -1,9 +1,8 @@
-package com.roey.ocr.generatesimple;
+package com.roey.ocr.simple;
 
 import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.util.ImageHandleUtil;
-import com.roey.ocr.util.ImageShowUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,7 +17,7 @@ import java.util.List;
  * @author: lizhanping
  * @date: 2018/10/24 16:56
  **/
-public class GenerateSimple {
+public class SimpleGenerate {
     public static void generateGjjOcrSimple(String imagePath) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, 180);
