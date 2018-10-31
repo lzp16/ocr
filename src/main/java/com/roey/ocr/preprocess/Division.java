@@ -57,11 +57,12 @@ public class Division {
         int minFontSpace = 0;
         int minColumnSpace = 0;
         for (int i = 0; i < horizontalWaveRange.size(); i = i + 2) {
+            ImageShowUtil.img(image.getSubimage(0, horizontalWaveRange.get(i), image.getWidth(), horizontalWaveRange.get(i + 1) - horizontalWaveRange.get(i) + 1));
             int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0, horizontalWaveRange.get(i), image.getWidth(), horizontalWaveRange.get(i + 1) - horizontalWaveRange.get(i) + 1), ImageHandleUtil.VERTICAL);
             maxFontWidth = getMaxWaveLen(verticalProjections, 1, Integer.MAX_VALUE);
             minFontWidth = getMinWaveLen(verticalProjections, 1, 1);
             mdFontWidth = (maxFontWidth + minFontWidth) / 2;
-            minFontSpace = getMinSpaceLen(verticalProjections, 0, 1);
+            minFontSpace = getMinSpaceLen(verticalProjections, 0, 0);
             minColumnSpace = getMinSpaceLen(verticalProjections, 0, mdFontWidth);
             List<List<Integer>> verticalWaveRange = ImageHandleUtil.divideProjectionWaveExt(verticalProjections, ImageHandleUtil.DEF_MIN_RANGE, minFontWidth, minFontSpace, minColumnSpace);
             for (int j = 0; j < verticalWaveRange.size(); j++) {
@@ -98,7 +99,7 @@ public class Division {
             if (array[i] >= specNum) {
                 temp++;
             } else {
-                if (temp > boundary && temp < minLen) {
+                if (temp >= boundary && temp < minLen) {
                     minLen = temp;
                 }
                 temp = 0;
@@ -114,7 +115,7 @@ public class Division {
             if (array[i] <= specNum) {
                 temp++;
             } else {
-                if (temp > boundary && temp < minLen) {
+                if (temp >= boundary && temp < minLen) {
                     minLen = temp;
                 }
                 temp = 0;
@@ -131,7 +132,7 @@ public class Division {
             if (array[i] >= specNum) {
                 temp++;
             } else {
-                if (temp < boundary && temp > maxLen) {
+                if (temp <= boundary && temp > maxLen) {
                     maxLen = temp;
                 }
                 temp = 0;
@@ -147,7 +148,7 @@ public class Division {
             if (array[i] <= 0) {
                 temp++;
             } else {
-                if (temp < boundary && temp > maxLen) {
+                if (temp <= boundary && temp > maxLen) {
                     maxLen = temp;
                 }
                 temp = 0;

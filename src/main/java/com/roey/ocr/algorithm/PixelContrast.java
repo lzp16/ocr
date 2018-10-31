@@ -1,11 +1,33 @@
 package com.roey.ocr.algorithm;
 
+import com.roey.ocr.entity.Sample;
+import com.roey.ocr.sample.SampleLoad;
+
+import java.util.List;
+
 import static com.roey.ocr.util.CommonUtil.extMatrix;
 
 /**
  * Created by LiZhanPing on 2018/10/29.
  */
-public class PixelContrast {
+public class PixelContrast implements Recognizable<int[][]> {
+
+    public static List<Sample<int[][]>> samples = SampleLoad.loadSampleData();
+
+    @Override
+    public String getTypeId(int[][] value) {
+        String result = "";
+        int lastScore = Integer.MAX_VALUE;
+        for (Sample<int[][]> sample : samples) {
+            int score = contrastPixel(sample.getValue(), value);
+            if (score < lastScore) {
+                result = sample.getTypeId();
+                lastScore = score;
+            }
+        }
+        return result;
+    }
+
     /**
      * 以图片左下角为原点进行像素对比
      *
@@ -14,14 +36,6 @@ public class PixelContrast {
      * @return
      */
     public static int contrastPixel(int[][] simpleData, int[][] unknowData) {
-//        System.out.println(">>>>>>>>>simpleData>>>>>>>>>>>");
-//        for (int i = 0; i < simpleData.length; i++) {
-//            System.out.println(Arrays.toString(simpleData[i]));
-//        }
-//        System.out.println("<<<<<<<<<unknowData<<<<<<<<<<<");
-//        for (int i = 0; i < unknowData.length; i++) {
-//            System.out.println(Arrays.toString(unknowData[i]));
-//        }
         int result = 0;
         int row;
         int column;

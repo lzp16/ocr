@@ -1,9 +1,10 @@
 package com.roey.ocr.pageAnalysis;
 
+import com.roey.ocr.algorithm.knn.TwoArrayKnnClassification;
 import com.roey.ocr.entity.Cell;
 import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.preprocess.Division;
-import com.roey.ocr.simple.SimpleLoad;
+import com.roey.ocr.sample.SampleLoad;
 import com.roey.ocr.util.ImageHandleUtil;
 import com.roey.ocr.util.ImageShowUtil;
 
@@ -13,9 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.roey.ocr.algorithm.PixelContrast.contrastPixel;
 import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
 
 /**
@@ -26,9 +25,9 @@ import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
  **/
 public class Analysis {
 
-    public static Map<String, List<int[][]>> simpleMap = SimpleLoad.loadSimpleData();
+    TwoArrayKnnClassification classification = new TwoArrayKnnClassification();
 
-    public static List<List<String>> analysisTable(BufferedImage image) {
+    public List<List<String>> analysisTable(BufferedImage image) {
         List<List<String>> result = new ArrayList<>();
         List<Cell> cells = Division.divideCell(image);
         List<String> rows = new ArrayList<>();
@@ -43,40 +42,32 @@ public class Analysis {
                 values.append(value);
             }
             rows.add(values.toString());
+            if (i == cells.size() - 1) {
+                result.add(rows);
+            }
         }
         return result;
     }
 
-    public static String analysisFont(BufferedImage image, FontRange fontRange) {
+    public String analysisFont(BufferedImage image, FontRange fontRange) {
         BufferedImage fontImage = image.getSubimage(fontRange.getX1(), fontRange.getY1(), fontRange.getWidth(), fontRange.getHeight());
-//        ImageShowUtil.img(fontImage);
         int[][] unknownFontData = getFontImageMatrix(fontImage);
-        int score = 0;
-        String result = "";
-        int lastScore = Integer.MAX_VALUE;
-        for (Map.Entry<String, List<int[][]>> entry : simpleMap.entrySet()) {
-//            System.out.println(">>>>>>>>>" + entry.getKey() + ">>>>>>>>>>>");
-            score = contrastPixel(entry.getValue().get(0), unknownFontData);
-//            System.out.println("<<<<<<<<<" + score + "<<<<<<<<<<<");
-            if (lastScore > score) {
-//                if(score>80){
-//                    continue;
-//                }
-                result = entry.getKey();
-                lastScore = score;
-            }
-        }
-        System.out.println("<<<<<<<<<" + score + "<<<<<<<<<<<");
-        System.out.println("<<<<<<<<<" + result + "<<<<<<<<<<<");
-        return result;
+        return classification.getTypeId(unknownFontData);
+    }
+
+
+    public void loadSample() {
+        SampleLoad.loadSampleData().forEach(sample -> classification.addRecord(sample.getValue(), sample.getTypeId()));
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\LiZhanPing\\Desktop\\ocr\\huangshi\\huangshi_2.png"));
-//        BufferedImage image = ImageIO.read(new File("E:\\chifeng_1.png"));
+        BufferedImage image = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_3.png"));
+        image = image.getSubimage(0, 40, 145, 330);
         image = ImageHandleUtil.binaryImage(image, 180);
         ImageShowUtil.img(image);
-        List<List<String>> lists = analysisTable(image);
+        Analysis analysis = new Analysis();
+        analysis.loadSample();
+        List<List<String>> lists = analysis.analysisTable(image);
         for (int i = 0; i < lists.size(); i++) {
             System.out.println(lists.get(i));
         }

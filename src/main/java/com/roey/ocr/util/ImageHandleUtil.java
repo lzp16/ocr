@@ -15,7 +15,6 @@ import java.util.List;
  **/
 public class ImageHandleUtil {
 
-
     //最小波幅
     public final static int DEF_MIN_RANGE = 1;
     //最小波长
@@ -217,16 +216,21 @@ public class ImageHandleUtil {
      */
     public static LinkedHashMap<Integer, Integer> divideProjectionWave(int[] projections, int minRange, int minWaveLen, int minSpace) {
         LinkedHashMap<Integer, Integer> peekRange = new LinkedHashMap<>();
-        List<Integer> list = new ArrayList<>();
         int begin = 0;
         int end;
         for (int i = 0; i < projections.length; i++) {
             if (projections[i] >= minRange && begin == 0) {
                 begin = i;
             } else if (projections[i] >= minRange && begin != 0) {
+                if (i == projections.length - 1) {
+                    end = i;
+                    if (end - begin + 1 >= minWaveLen) {
+                        peekRange.put(begin, end);
+                    }
+                }
                 continue;
             } else if (projections[i] < minRange && begin != 0) {
-                end = i;
+                end = i - 1;
                 boolean flag = true;
                 for (int j = i; j < i + minSpace; j++) {
                     if (j < projections.length) {
@@ -236,8 +240,8 @@ public class ImageHandleUtil {
                         }
                     }
                 }
-                if (end - begin >= minWaveLen && flag) {
-                    peekRange.put(begin - 1, end + 1);
+                if (end - begin + 1 >= minWaveLen && flag) {
+                    peekRange.put(begin, end);
                     begin = 0;
                 }
             } else {
@@ -264,9 +268,16 @@ public class ImageHandleUtil {
             if (projections[i] >= minRange && begin == 0) {
                 begin = i;
             } else if (projections[i] >= minRange && begin != 0) {
+                if (i == projections.length - 1) {
+                    end = i;
+                    if (end - begin + 1 >= minWaveLen) {
+                        list.add(begin);
+                        list.add(end);
+                    }
+                }
                 continue;
             } else if (projections[i] < minRange && begin != 0) {
-                end = i;
+                end = i - 1;
                 boolean flag = true;
                 for (int j = i; j < i + minSpace; j++) {
                     if (j < projections.length) {
@@ -276,9 +287,9 @@ public class ImageHandleUtil {
                         }
                     }
                 }
-                if (end - begin >= minWaveLen && flag) {
-                    list.add(begin - 1);
-                    list.add(end + 1);
+                if (end - begin + 1 >= minWaveLen && flag) {
+                    list.add(begin);
+                    list.add(end);
                     begin = 0;
                 }
             } else {
@@ -299,41 +310,105 @@ public class ImageHandleUtil {
      */
     public static List<List<Integer>> divideProjectionWaveExt(int[] projections, int minRange, int minWaveLen, int minWaveSpace, int minWaveGroupSpace) {
         List<List<Integer>> result = new ArrayList<>();
-        int begin = 0;
-        int lastend = 0;
+        int begin = -1;
         int end = 0;
+        int space = 0;
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < projections.length; i++) {
-            if (projections[i] >= minRange && begin == 0) {
-                begin = i;
-            } else if (projections[i] >= minRange && begin != 0) {
-                continue;
-            } else if (projections[i] < minRange && begin != 0) {
-                lastend = end;
-                end = i;
-                boolean flag = true;
-                for (int j = i; j < i + minWaveSpace; j++) {
-                    if (j < projections.length) {
-                        if (projections[j] >= minRange) {
-                            flag = false;
-                            break;
+            if (projections[i] >= minRange) {
+                if (begin == -1 || space >= minWaveSpace) {
+                    begin = i;
+                }
+                for (; i < projections.length; i++) {
+                    if (i == (projections.length - 1)) {
+                        if (projections[i] < minRange) {
+                            end = i - 1;
+                            if (end - begin + 1 >= minWaveLen) {
+                                list.add(begin);
+                                list.add(end);
+                            }
+                            result.add(list);
+                        } else {
+                            end = i;
+                            if (end - begin + 1 >= minWaveLen) {
+                                list.add(begin);
+                                list.add(end);
+                            }
+                            result.add(list);
                         }
+                        break;
+                    }
+                    if (projections[i] < minRange) {
+                        break;
                     }
                 }
-                if (end - begin >= minWaveLen && flag) {
-                    if (begin - lastend >= minWaveGroupSpace || i == projections.length - 1) {
+            }
+            if (i == (projections.length - 1)) {
+                break;
+            }
+            space = 0;
+            if (projections[i] < minRange) {
+                for (; i < projections.length; i++) {
+                    if (i == (projections.length - 1)) {
+                        if (projections[i] < minRange) {
+                            end = i - (space + 1);
+                            if (end - begin + 1 >= minWaveLen) {
+                                list.add(begin);
+                                list.add(end);
+                            }
+                            result.add(list);
+                        } else {
+                            end = i - 1 - space;
+                            if (end - begin + 1 >= minWaveLen) {
+                                list.add(begin);
+                                list.add(end);
+                            }
+                            result.add(list);
+                        }
+                        break;
+                    }
+                    if (projections[i] >= minRange) {
+                        i--;
+                        break;
+                    } else {
+                        space++;
+                    }
+                }
+            }
+            if (i == (projections.length - 1)) {
+                break;
+            }
+            if (space >= minWaveSpace) {
+                end = i - space;
+                if (end - begin + 1 >= minWaveLen) {
+                    list.add(begin);
+                    list.add(end);
+                    if (space >= minWaveGroupSpace) {
                         result.add(list);
                         list = new ArrayList<>();
                     }
-                    list.add(begin - 1);
-                    list.add(end + 1);
-                    begin = 0;
                 }
-            } else {
-                continue;
             }
         }
         return result;
+    }
+
+    public static BufferedImage removeBothEnds(BufferedImage image) {
+        int[] ints = imageProjection(image, 0);
+        List<Integer> integers = divideProjectionWave2(ints, 1, 6, 3);
+        int head = 0;
+        int tail = image.getHeight() - 1;
+        if (integers.size() > 4) {
+            for (int i = 0; i < integers.size(); i++) {
+                if (i == 1) {
+                    head = integers.get(i);
+                }
+                if (i == integers.size() - 2) {
+                    tail = integers.get(i);
+                }
+            }
+        }
+        return image.getSubimage(0, head, image.getWidth(), tail - head + 1);
     }
 
     public static BufferedImage optimizeColumnSpace(BufferedImage image, Integer... coluwns) {

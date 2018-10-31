@@ -1,4 +1,4 @@
-package com.roey.ocr.simple;
+package com.roey.ocr.sample;
 
 import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.preprocess.Division;
@@ -17,8 +17,8 @@ import java.util.List;
  * @author: lizhanping
  * @date: 2018/10/24 16:56
  **/
-public class SimpleGenerate {
-    public static void generateGjjOcrSimple(String imagePath) throws IOException {
+public class SampleGenerate {
+    public static void generateGjjOcrSample(String imagePath) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, 180);
         List<FontRange> fontRanges = Division.divideFont(image);
@@ -31,7 +31,7 @@ public class SimpleGenerate {
     }
 
     public static void main(String[] args) throws IOException {
-//        generateGjjOcrSimple("E:\\chifeng_1.png");
-        generateGjjOcrSimple("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi.png");
+//        generateGjjOcrSample("E:\\chifeng_1.png");
+        generateGjjOcrSample("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi.png");
     }
 }
