@@ -21,6 +21,10 @@ public class SampleGenerate {
     public static void generateGjjOcrSample(String imagePath) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, 180);
+        generateGjjOcrSample(image);
+    }
+
+    public static void generateGjjOcrSample(BufferedImage image) throws IOException {
         List<FontRange> fontRanges = Division.divideFont(image);
         String date = LocalDate.now().toString().replace("-", "");
         String preFilePath = "E:\\" + date + "\\" + date;
@@ -31,7 +35,10 @@ public class SampleGenerate {
     }
 
     public static void main(String[] args) throws IOException {
-//        generateGjjOcrSample("E:\\chifeng_1.png");
-        generateGjjOcrSample("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi.png");
+        BufferedImage image = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_3.png"));
+        image = ImageHandleUtil.binaryImage(image, 180);
+        image = ImageHandleUtil.removeBothEnds(image);
+        image = ImageHandleUtil.optimizeColumnSpace(image,1,2,3);
+        generateGjjOcrSample(image);
     }
 }

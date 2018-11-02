@@ -1,5 +1,7 @@
 package com.roey.ocr.util;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -380,7 +382,7 @@ public class ImageHandleUtil {
             }
             if (space >= minWaveSpace) {
                 end = i - space;
-                if (end - begin + 1 >= minWaveLen) {
+                if (end - Math.abs(begin) + 1 >= minWaveLen) {
                     list.add(begin);
                     list.add(end);
                     if (space >= minWaveGroupSpace) {
@@ -401,10 +403,10 @@ public class ImageHandleUtil {
         if (integers.size() > 4) {
             for (int i = 0; i < integers.size(); i++) {
                 if (i == 1) {
-                    head = integers.get(i);
+                    head = integers.get(i)+1;
                 }
                 if (i == integers.size() - 2) {
-                    tail = integers.get(i);
+                    tail = integers.get(i)-1;
                 }
             }
         }
@@ -493,12 +495,16 @@ public class ImageHandleUtil {
 
 
     public static void main(String[] args) throws Exception {
-        BufferedImage image1 = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\chifeng\\chifeng_1.png"));
-        image1 = binaryImage(image1, 180);
-        ImageShowUtil.img(image1);
-        showProjection(image1, 1);
-        image1 = image1.getSubimage(0, 35, image1.getWidth(), image1.getHeight() - 35 - 48);
-        image1 = optimizeColumnSpace(image1, 1, 3, 2, 4);
-        ImageShowUtil.img(image1);
+//        BufferedImage image1 = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\chifeng\\chifeng_1.png"));
+//        image1 = binaryImage(image1, 180);
+//        ImageShowUtil.img(image1);
+//        showProjection(image1, 1);
+//        image1 = image1.getSubimage(0, 35, image1.getWidth(), image1.getHeight() - 35 - 48);
+//        image1 = optimizeColumnSpace(image1, 1, 3, 2, 4);
+//        ImageShowUtil.img(image1);
+
+        int[] a = {0,0,0,1,1,1,0,0,1,1,0,0,0,0,1,1,1};
+        List<List<Integer>> lists = divideProjectionWaveExt(a, 1, 1, 1, 4);
+        System.out.println(JSONObject.toJSONString(lists));
     }
 }

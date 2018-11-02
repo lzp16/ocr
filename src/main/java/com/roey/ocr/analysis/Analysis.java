@@ -1,17 +1,13 @@
-package com.roey.ocr.pageAnalysis;
+package com.roey.ocr.analysis;
 
 import com.roey.ocr.algorithm.knn.TwoArrayKnnClassification;
 import com.roey.ocr.entity.Cell;
 import com.roey.ocr.entity.FontRange;
+import com.roey.ocr.postprocess.Compose;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.sample.SampleLoad;
-import com.roey.ocr.util.ImageHandleUtil;
-import com.roey.ocr.util.ImageShowUtil;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +37,7 @@ public class Analysis {
                 String value = analysisFont(image, fontRange);
                 values.append(value);
             }
-            rows.add(values.toString());
+            rows.add(Compose.composeFont(values.toString()));
             if (i == cells.size() - 1) {
                 result.add(rows);
             }
@@ -58,18 +54,5 @@ public class Analysis {
 
     public void loadSample() {
         SampleLoad.loadSampleData().forEach(sample -> classification.addRecord(sample.getValue(), sample.getTypeId()));
-    }
-
-    public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_3.png"));
-        image = image.getSubimage(0, 40, 145, 330);
-        image = ImageHandleUtil.binaryImage(image, 180);
-        ImageShowUtil.img(image);
-        Analysis analysis = new Analysis();
-        analysis.loadSample();
-        List<List<String>> lists = analysis.analysisTable(image);
-        for (int i = 0; i < lists.size(); i++) {
-            System.out.println(lists.get(i));
-        }
     }
 }

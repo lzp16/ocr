@@ -18,7 +18,7 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
 
     private List<Sample> dataArray;
 
-    private int k = 3;
+    private int k = 1;
 
     public int getK() {
         return k;

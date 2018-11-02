@@ -57,7 +57,6 @@ public class Division {
         int minFontSpace = 0;
         int minColumnSpace = 0;
         for (int i = 0; i < horizontalWaveRange.size(); i = i + 2) {
-            ImageShowUtil.img(image.getSubimage(0, horizontalWaveRange.get(i), image.getWidth(), horizontalWaveRange.get(i + 1) - horizontalWaveRange.get(i) + 1));
             int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0, horizontalWaveRange.get(i), image.getWidth(), horizontalWaveRange.get(i + 1) - horizontalWaveRange.get(i) + 1), ImageHandleUtil.VERTICAL);
             maxFontWidth = getMaxWaveLen(verticalProjections, 1, Integer.MAX_VALUE);
             minFontWidth = getMinWaveLen(verticalProjections, 1, 1);

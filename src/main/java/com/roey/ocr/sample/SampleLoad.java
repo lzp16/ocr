@@ -1,7 +1,7 @@
 package com.roey.ocr.sample;
 
+import com.roey.ocr.analysis.Analysis;
 import com.roey.ocr.entity.Sample;
-import com.roey.ocr.pageAnalysis.Analysis;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,8 +18,9 @@ public class SampleLoad<T> {
 
     public static List<Sample<int[][]>> loadSampleData() {
         List<Sample<int[][]>> samples = new ArrayList<>();
-        //汇缴、年终结息、公积金提取还款
+
         String basePath = Analysis.class.getClassLoader().getResource(".").getFile() + "fontsimple/shenyue/";
+        basePath = basePath.replace("test-classes", "classes");
         samples.addAll(getSampleValue("序", basePath + "xu"));
         samples.addAll(getSampleValue("号", basePath + "hao"));
         samples.addAll(getSampleValue("记", basePath + "ji2"));
@@ -44,6 +45,8 @@ public class SampleLoad<T> {
         samples.addAll(getSampleValue("方", basePath + "fang"));
         samples.addAll(getSampleValue("式", basePath + "shi"));
         samples.addAll(getSampleValue("余", basePath + "yu"));
+
+        //汇缴、年度/终结息、公积金提取还款、偿还购房贷款本息、部分提取、其他
         samples.addAll(getSampleValue(".", basePath + "dian"));
         samples.addAll(getSampleValue(",", basePath + "douhao"));
         samples.addAll(getSampleValue("-", basePath + "hengxian"));
@@ -57,30 +60,36 @@ public class SampleLoad<T> {
         samples.addAll(getSampleValue("7", basePath + "7"));
         samples.addAll(getSampleValue("8", basePath + "8"));
         samples.addAll(getSampleValue("9", basePath + "9"));
-        samples.addAll(getSampleValue("公", basePath + "gong"));
-        samples.addAll(getSampleValue("号", basePath + "hao"));
-        samples.addAll(getSampleValue("还", basePath + "huan"));
+        samples.addAll(getSampleValue("sandianshui", basePath + "sandianshui"));
+        samples.addAll(getSampleValue("fang", basePath + "fang3"));
         samples.addAll(getSampleValue("汇", basePath + "hui"));
-        samples.addAll(getSampleValue("积", basePath + "ji"));
         samples.addAll(getSampleValue("缴", basePath + "jiao"));
-        samples.addAll(getSampleValue("结", basePath + "jie"));
-        samples.addAll(getSampleValue("金", basePath + "jin"));
-        samples.addAll(getSampleValue("款", basePath + "kuan"));
         samples.addAll(getSampleValue("年", basePath + "nian"));
         samples.addAll(getSampleValue("度", basePath + "du"));
-        samples.addAll(getSampleValue("取", basePath + "qu"));
-        samples.addAll(getSampleValue("提", basePath + "ti"));
-        samples.addAll(getSampleValue("息", basePath + "xi"));
         samples.addAll(getSampleValue("终", basePath + "zhong"));
-        samples.addAll(getSampleValue("部", basePath + "bu"));
-        samples.addAll(getSampleValue("分", basePath + "fen"));
+        samples.addAll(getSampleValue("结", basePath + "jie"));
+        samples.addAll(getSampleValue("息", basePath + "xi"));
+        samples.addAll(getSampleValue("公", basePath + "gong"));
+        samples.addAll(getSampleValue("积", basePath + "ji"));
+        samples.addAll(getSampleValue("金", basePath + "jin"));
+        samples.addAll(getSampleValue("提", basePath + "ti"));
+        samples.addAll(getSampleValue("取", basePath + "qu"));
+        samples.addAll(getSampleValue("还", basePath + "huan"));
+        samples.addAll(getSampleValue("款", basePath + "kuan"));
         samples.addAll(getSampleValue("偿", basePath + "chang"));
         samples.addAll(getSampleValue("购", basePath + "gou"));
         samples.addAll(getSampleValue("房", basePath + "fang2"));
         samples.addAll(getSampleValue("贷", basePath + "dai"));
         samples.addAll(getSampleValue("本", basePath + "ben"));
+        samples.addAll(getSampleValue("部", basePath + "bu"));
+        samples.addAll(getSampleValue("分", basePath + "fen"));
         samples.addAll(getSampleValue("其", basePath + "qi2"));
         samples.addAll(getSampleValue("它", basePath + "ta"));
+        samples.addAll(getSampleValue("内", basePath + "nei"));
+        samples.addAll(getSampleValue("转", basePath + "zhuan"));
+        samples.addAll(getSampleValue("he", basePath + "he2"));
+        samples.addAll(getSampleValue("duo", basePath + "duo"));
+
         samples.addAll(getSampleValue("共", basePath + "gong2"));
         samples.addAll(getSampleValue("条", basePath + "tiao"));
         samples.addAll(getSampleValue("录", basePath + "lu"));

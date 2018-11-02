@@ -12,9 +12,10 @@ import java.io.IOException;
  */
 public class ImageShowUtil {
 
-    static{
+    static {
         System.setProperty("java.awt.headless", "false");
     }
+
     public static String img(String path) {
         return img(Toolkit.getDefaultToolkit().getImage(path));
     }
@@ -35,7 +36,7 @@ public class ImageShowUtil {
 
     public static String img(Image image) {
         ImageIcon icon = new ImageIcon(image);
-        icon.setImage(icon.getImage().getScaledInstance(image.getWidth(null), image.getHeight(null)+30, Image.SCALE_DEFAULT));
+        icon.setImage(icon.getImage().getScaledInstance(image.getWidth(null), image.getHeight(null) + 30, Image.SCALE_DEFAULT));
         return JOptionPane.showInputDialog(icon);
     }
 
@@ -43,9 +44,4 @@ public class ImageShowUtil {
         System.out.println(msg);
         return (String) JOptionPane.showInputDialog(null, msg, "", JOptionPane.QUESTION_MESSAGE, null, null, null);
     }
-
-    public static void main(String[] args) {
-        img("E:\\HanZhong2.png");
-    }
-
 }
