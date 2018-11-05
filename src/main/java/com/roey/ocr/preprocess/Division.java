@@ -5,11 +5,8 @@ import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.util.ImageHandleUtil;
 import com.roey.ocr.util.ImageShowUtil;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,11 +186,5 @@ public class Division {
         });
         graphics.dispose();
         ImageShowUtil.img(image);
-    }
-
-    public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\ocr\\chifeng\\chifeng_1.png"));
-        image = ImageHandleUtil.binaryImage(image, 180);
-        showDivision(image);
     }
 }

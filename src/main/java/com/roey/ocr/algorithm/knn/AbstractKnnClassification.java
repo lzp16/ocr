@@ -3,6 +3,7 @@ package com.roey.ocr.algorithm.knn;
 import com.roey.ocr.algorithm.Recognizable;
 import com.roey.ocr.entity.Sample;
 import com.roey.ocr.entity.Score;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ import java.util.*;
  **/
 
 @SuppressWarnings({"rawtypes"})
+@Component
 public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
 
     private List<Sample> dataArray;
@@ -32,10 +34,10 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     }
 
     /**
+     * 向模型中添加记录
+     *
      * @param value
      * @param typeId
-     * @Author:lulei
-     * @Description: 向模型中添加记录
      */
     public void addRecord(T value, String typeId) {
         if (dataArray == null) {
@@ -45,10 +47,10 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     }
 
     /**
+     * KNN分类判断value的类别
+     *
      * @param value
      * @return
-     * @Author:lulei
-     * @Description: KNN分类判断value的类别
      */
     @Override
     public String getTypeId(T value) {
@@ -78,10 +80,10 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     }
 
     /**
+     * 获取K个距离最近的分类
+     *
      * @param value
      * @return
-     * @Author:lulei
-     * @Description: 获取K个距离最近的分类
      */
     private Score[] getKType(T value) {
         int k = 0;
@@ -117,11 +119,11 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     }
 
     /**
+     * o1 o2之间的相似度
+     *
      * @param o1
      * @param o2
      * @return
-     * @Author:lulei
-     * @Description: o1 o2之间的相似度
      */
     public abstract double similarScore(T o1, T o2);
 }

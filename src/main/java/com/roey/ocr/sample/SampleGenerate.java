@@ -19,11 +19,6 @@ import java.util.List;
  **/
 public class SampleGenerate {
 
-    public static void main(String[] args) throws IOException {
-        generateShenYueSample("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_7.png", 180, 1, 2, 3);
-//        generateYzmSample("C:\\Users\\B-0036\\Desktop\\yzm1.jpg", 120, "test");
-    }
-
     public static void generateYzmSample(String imagePath, int grayBoundary, String tag) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, grayBoundary);

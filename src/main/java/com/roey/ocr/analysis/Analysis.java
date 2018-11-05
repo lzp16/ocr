@@ -6,6 +6,7 @@ import com.roey.ocr.entity.FontRange;
 import com.roey.ocr.postprocess.Compose;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.sample.SampleLoad;
+import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
  * @author: lizhanping
  * @date: 2018/10/24 16:17
  **/
+@Component
 public class Analysis {
 
     TwoArrayKnnClassification classification = new TwoArrayKnnClassification();
