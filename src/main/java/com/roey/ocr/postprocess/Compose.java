@@ -8,6 +8,6 @@ package com.roey.ocr.postprocess;
  **/
 public class Compose {
     public static String composeFont(String str) {
-        return str.replace("sandianshuifang", "汇").replace("heduo", "移");
+        return str.replace("sandianshuifang", "汇").replace("heduo", "移").replace("yibo", "补");
     }
 }
