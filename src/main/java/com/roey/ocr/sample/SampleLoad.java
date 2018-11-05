@@ -89,6 +89,8 @@ public class SampleLoad<T> {
         samples.addAll(getSampleValue("转", basePath + "zhuan"));
         samples.addAll(getSampleValue("he", basePath + "he2"));
         samples.addAll(getSampleValue("duo", basePath + "duo"));
+        samples.addAll(getSampleValue("yi", basePath + "yi3"));
+        samples.addAll(getSampleValue("bo", basePath + "bo"));
 
         samples.addAll(getSampleValue("共", basePath + "gong2"));
         samples.addAll(getSampleValue("条", basePath + "tiao"));
