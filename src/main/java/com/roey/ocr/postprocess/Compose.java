@@ -7,7 +7,7 @@ package com.roey.ocr.postprocess;
  * @date: 2018/11/2 12:14
  **/
 public class Compose {
-    public static String composeFont(String str) {
+    public static String composeChar(String str) {
         return str.replace("sandianshuifang", "汇").replace("heduo", "移").replace("yibo", "补");
     }
 }

@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
+import static com.roey.ocr.util.ImageHandleUtil.getCharImageMatrix;
 
 /**
  * Created by LiZhanPing on 2018/10/29.
@@ -19,7 +19,7 @@ public class SampleLoad<T> {
     public static List<Sample<int[][]>> loadSampleData() {
         List<Sample<int[][]>> samples = new ArrayList<>();
 
-        String basePath = Analysis.class.getClassLoader().getResource(".").getFile() + "fontsimple/shenyue/";
+        String basePath = Analysis.class.getClassLoader().getResource(".").getFile() + "charsample/shenyue/";
         basePath = basePath.replace("test-classes", "classes");
         samples.addAll(getSampleValue("序", basePath + "xu"));
         samples.addAll(getSampleValue("号", basePath + "hao"));
@@ -111,7 +111,7 @@ public class SampleLoad<T> {
         try {
             for (int i = 0; i < files.length; i++) {
                 BufferedImage image = ImageIO.read(files[i]);
-                result.add(new Sample<>(typeId, getFontImageMatrix(image)));
+                result.add(new Sample<>(typeId, getCharImageMatrix(image)));
             }
         } catch (Exception e) {
             System.out.println(path);

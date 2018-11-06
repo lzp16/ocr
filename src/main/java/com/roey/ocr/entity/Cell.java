@@ -12,7 +12,7 @@ public class Cell {
 
     private int rowNum;
     private int colNum;
-    private List<FontRange> values;
+    private List<CharArea> values;
 
     public int getRowNum() {
         return rowNum;
@@ -30,11 +30,11 @@ public class Cell {
         this.colNum = colNum;
     }
 
-    public List<FontRange> getValues() {
+    public List<CharArea> getValues() {
         return values;
     }
 
-    public void setValues(List<FontRange> values) {
+    public void setValues(List<CharArea> values) {
         this.values = values;
     }
 }

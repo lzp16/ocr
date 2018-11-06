@@ -6,7 +6,7 @@ package com.roey.ocr.entity;
  * @author: lizhanping
  * @date: 2018/10/11 17:40
  **/
-public class FontRange {
+public class CharArea {
 
     private int x1;
     private int y1;

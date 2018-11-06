@@ -2,7 +2,7 @@ package com.roey.ocr.analysis;
 
 import com.roey.ocr.algorithm.knn.TwoArrayKnnClassification;
 import com.roey.ocr.entity.Cell;
-import com.roey.ocr.entity.FontRange;
+import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.postprocess.Compose;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.sample.SampleLoad;
@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.roey.ocr.util.ImageHandleUtil.getFontImageMatrix;
+import static com.roey.ocr.util.ImageHandleUtil.getCharImageMatrix;
 
 /**
  * description
@@ -35,11 +35,11 @@ public class Analysis {
                 rows = new ArrayList<>();
             }
             StringBuilder values = new StringBuilder();
-            for (FontRange fontRange : cells.get(i).getValues()) {
-                String value = analysisFont(image, fontRange);
+            for (CharArea charArea : cells.get(i).getValues()) {
+                String value = analysisChar(image, charArea);
                 values.append(value);
             }
-            rows.add(Compose.composeFont(values.toString()));
+            rows.add(Compose.composeChar(values.toString()));
             if (i == cells.size() - 1) {
                 result.add(rows);
             }
@@ -47,10 +47,10 @@ public class Analysis {
         return result;
     }
 
-    public String analysisFont(BufferedImage image, FontRange fontRange) {
-        BufferedImage fontImage = image.getSubimage(fontRange.getX1(), fontRange.getY1(), fontRange.getWidth(), fontRange.getHeight());
-        int[][] unknownFontData = getFontImageMatrix(fontImage);
-        return classification.getTypeId(unknownFontData);
+    public String analysisChar(BufferedImage image, CharArea charArea) {
+        BufferedImage charImage = image.getSubimage(charArea.getX1(), charArea.getY1(), charArea.getWidth(), charArea.getHeight());
+        int[][] unknownCharData = getCharImageMatrix(charImage);
+        return classification.getTypeId(unknownCharData);
     }
 
 

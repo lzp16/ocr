@@ -1,7 +1,7 @@
 package com.roey.ocr.preprocess;
 
 import com.roey.ocr.entity.Cell;
-import com.roey.ocr.entity.FontRange;
+import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.util.ImageHandleUtil;
 import com.roey.ocr.util.ImageShowUtil;
 
@@ -19,24 +19,24 @@ import java.util.List;
  **/
 public class Division {
 
-    public static List<FontRange> divideFont(BufferedImage image) {
+    public static List<CharArea> divideChar(BufferedImage image) {
         int[] horizontalProjections = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
-        int minFontHeight = getMinWaveLen(horizontalProjections, 1, 1);
+        int minCharHeight = getMinWaveLen(horizontalProjections, 1, 1);
         int minRowSpace = getMinSpaceLen(horizontalProjections, 0, 0);
-        LinkedHashMap<Integer, Integer> verticalCharacterBorder = ImageHandleUtil.divideProjectionWave(horizontalProjections, ImageHandleUtil.DEF_MIN_RANGE, minFontHeight, minRowSpace);
-        List<FontRange> list = new ArrayList<>();
+        LinkedHashMap<Integer, Integer> verticalCharacterBorder = ImageHandleUtil.divideProjectionWave(horizontalProjections, ImageHandleUtil.DEF_MIN_RANGE, minCharHeight, minRowSpace);
+        List<CharArea> list = new ArrayList<>();
         verticalCharacterBorder.forEach((k, v) -> {
             int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0, k, image.getWidth(), v - k + 1), 1);
-            int minFontWidth = getMinWaveLen(verticalProjections, 1, 1);
-            int minFontSpace = getMinSpaceLen(verticalProjections, 0, 1);
-            LinkedHashMap<Integer, Integer> horizontalCharacterBorder = ImageHandleUtil.divideProjectionWave(verticalProjections, ImageHandleUtil.DEF_MIN_RANGE, minFontWidth, minFontSpace);
+            int minCharWidth = getMinWaveLen(verticalProjections, 1, 1);
+            int minCharSpace = getMinSpaceLen(verticalProjections, 0, 1);
+            LinkedHashMap<Integer, Integer> horizontalCharacterBorder = ImageHandleUtil.divideProjectionWave(verticalProjections, ImageHandleUtil.DEF_MIN_RANGE, minCharWidth, minCharSpace);
             horizontalCharacterBorder.forEach((key, value) -> {
-                FontRange fontRange = new FontRange();
-                fontRange.setX1(key);
-                fontRange.setX2(value);
-                fontRange.setY1(k);
-                fontRange.setY2(v);
-                list.add(fontRange);
+                CharArea charArea = new CharArea();
+                charArea.setX1(key);
+                charArea.setX2(value);
+                charArea.setY1(k);
+                charArea.setY2(v);
+                list.add(charArea);
             });
         });
         return list;
@@ -45,34 +45,34 @@ public class Division {
     public static List<Cell> divideCell(BufferedImage image) {
         List<Cell> cells = new ArrayList<>();
         int[] horizontalProjections = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
-        int minFontHeight = getMinWaveLen(horizontalProjections, 1, 1);
+        int minCharHeight = getMinWaveLen(horizontalProjections, 1, 1);
         int minRowSpace = getMinSpaceLen(horizontalProjections, 0, 0);
-        List<Integer> horizontalWaveRange = ImageHandleUtil.divideProjectionWave2(horizontalProjections, ImageHandleUtil.DEF_MIN_RANGE, minFontHeight, minRowSpace);
-        int maxFontWidth = 0;
-        int minFontWidth = 0;
-        int mdFontWidth = 0;
-        int minFontSpace = 0;
+        List<Integer> horizontalWaveRange = ImageHandleUtil.divideProjectionWave2(horizontalProjections, ImageHandleUtil.DEF_MIN_RANGE, minCharHeight, minRowSpace);
+        int maxCharWidth = 0;
+        int minCharWidth = 0;
+        int mdCharWidth = 0;
+        int minCharSpace = 0;
         int minColumnSpace = 0;
         for (int i = 0; i < horizontalWaveRange.size(); i = i + 2) {
             int[] verticalProjections = ImageHandleUtil.imageProjection(image.getSubimage(0, horizontalWaveRange.get(i), image.getWidth(), horizontalWaveRange.get(i + 1) - horizontalWaveRange.get(i) + 1), ImageHandleUtil.VERTICAL);
-            maxFontWidth = getMaxWaveLen(verticalProjections, 1, Integer.MAX_VALUE);
-            minFontWidth = getMinWaveLen(verticalProjections, 1, 1);
-            mdFontWidth = (maxFontWidth + minFontWidth) / 2;
-            minFontSpace = getMinSpaceLen(verticalProjections, 0, 0);
-            minColumnSpace = getMinSpaceLen(verticalProjections, 0, mdFontWidth);
-            List<List<Integer>> verticalWaveRange = ImageHandleUtil.divideProjectionWaveExt(verticalProjections, ImageHandleUtil.DEF_MIN_RANGE, minFontWidth, minFontSpace, minColumnSpace);
+            maxCharWidth = getMaxWaveLen(verticalProjections, 1, Integer.MAX_VALUE);
+            minCharWidth = getMinWaveLen(verticalProjections, 1, 1);
+            mdCharWidth = (maxCharWidth + minCharWidth) / 2;
+            minCharSpace = getMinSpaceLen(verticalProjections, 0, 0);
+            minColumnSpace = getMinSpaceLen(verticalProjections, 0, mdCharWidth);
+            List<List<Integer>> verticalWaveRange = ImageHandleUtil.divideProjectionWaveExt(verticalProjections, ImageHandleUtil.DEF_MIN_RANGE, minCharWidth, minCharSpace, minColumnSpace);
             for (int j = 0; j < verticalWaveRange.size(); j++) {
                 Cell cell = new Cell();
                 cell.setRowNum(i / 2);
                 cell.setColNum(j);
-                List<FontRange> values = new ArrayList<>();
+                List<CharArea> values = new ArrayList<>();
                 for (int k = 0; k < verticalWaveRange.get(j).size(); k = k + 2) {
-                    FontRange fontRange = new FontRange();
-                    fontRange.setX1(verticalWaveRange.get(j).get(k));
-                    fontRange.setX2(verticalWaveRange.get(j).get(k + 1));
-                    fontRange.setY1(horizontalWaveRange.get(i));
-                    fontRange.setY2(horizontalWaveRange.get(i + 1));
-                    values.add(fontRange);
+                    CharArea charArea = new CharArea();
+                    charArea.setX1(verticalWaveRange.get(j).get(k));
+                    charArea.setX2(verticalWaveRange.get(j).get(k + 1));
+                    charArea.setY1(horizontalWaveRange.get(i));
+                    charArea.setY2(horizontalWaveRange.get(i + 1));
+                    values.add(charArea);
                 }
                 cell.setValues(values);
                 cells.add(cell);
@@ -175,14 +175,14 @@ public class Division {
     }
 
     public static void showDivision(BufferedImage image) {
-        List<FontRange> divides = divideFont(image);
+        List<CharArea> divides = divideChar(image);
         Graphics graphics = image.getGraphics();
         graphics.setColor(Color.RED);
-        divides.forEach(fontRange -> {
-            graphics.drawLine(fontRange.getX1(), fontRange.getY1(), fontRange.getX2(), fontRange.getY1());
-            graphics.drawLine(fontRange.getX1(), fontRange.getY1(), fontRange.getX1(), fontRange.getY2());
-            graphics.drawLine(fontRange.getX2(), fontRange.getY2(), fontRange.getX2(), fontRange.getY1());
-            graphics.drawLine(fontRange.getX2(), fontRange.getY2(), fontRange.getX1(), fontRange.getY2());
+        divides.forEach(charArea -> {
+            graphics.drawLine(charArea.getX1(), charArea.getY1(), charArea.getX2(), charArea.getY1());
+            graphics.drawLine(charArea.getX1(), charArea.getY1(), charArea.getX1(), charArea.getY2());
+            graphics.drawLine(charArea.getX2(), charArea.getY2(), charArea.getX2(), charArea.getY1());
+            graphics.drawLine(charArea.getX2(), charArea.getY2(), charArea.getX1(), charArea.getY2());
         });
         graphics.dispose();
         ImageShowUtil.img(image);

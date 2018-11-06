@@ -1,6 +1,6 @@
 package com.roey.ocr.sample;
 
-import com.roey.ocr.entity.FontRange;
+import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.util.ImageHandleUtil;
 
@@ -43,10 +43,10 @@ public class SampleGenerate {
         if (!file.exists()) {
             file.mkdirs();
         }
-        List<FontRange> fontRanges = Division.divideFont(image);
-        for (int i = 0; i < fontRanges.size(); i++) {
-            BufferedImage fontImage = image.getSubimage(fontRanges.get(i).getX1(), fontRanges.get(i).getY1(), fontRanges.get(i).getWidth(), fontRanges.get(i).getHeight());
-            ImageIO.write(fontImage, imageType, new File(dirPath + +i + "." + imageType));
+        List<CharArea> charAreas = Division.divideChar(image);
+        for (int i = 0; i < charAreas.size(); i++) {
+            BufferedImage charImage = image.getSubimage(charAreas.get(i).getX1(), charAreas.get(i).getY1(), charAreas.get(i).getWidth(), charAreas.get(i).getHeight());
+            ImageIO.write(charImage, imageType, new File(dirPath + +i + "." + imageType));
         }
     }
 }
