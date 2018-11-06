@@ -4,6 +4,7 @@ import com.roey.ocr.entity.Cell;
 import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.util.ImageHandleUtil;
 import com.roey.ocr.util.ImageShowUtil;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author: lizhanping
  * @date: 2018/10/11 17:28
  **/
+@Component
 public class Division {
 
     public static List<CharArea> divideChar(BufferedImage image) {

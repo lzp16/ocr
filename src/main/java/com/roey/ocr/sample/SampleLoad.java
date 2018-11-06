@@ -1,6 +1,6 @@
 package com.roey.ocr.sample;
 
-import com.roey.ocr.analysis.Analysis;
+import com.roey.ocr.recognition.Recognition;
 import com.roey.ocr.entity.Sample;
 
 import javax.imageio.ImageIO;
@@ -19,7 +19,7 @@ public class SampleLoad<T> {
     public static List<Sample<int[][]>> loadSampleData() {
         List<Sample<int[][]>> samples = new ArrayList<>();
 
-        String basePath = Analysis.class.getClassLoader().getResource(".").getFile() + "charsample/shenyue/";
+        String basePath = Recognition.class.getClassLoader().getResource(".").getFile() + "charsample/shenyue/";
         basePath = basePath.replace("test-classes", "classes");
         samples.addAll(getSampleValue("序", basePath + "xu"));
         samples.addAll(getSampleValue("号", basePath + "hao"));

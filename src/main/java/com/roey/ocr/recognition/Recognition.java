@@ -1,4 +1,4 @@
-package com.roey.ocr.analysis;
+package com.roey.ocr.recognition;
 
 import com.roey.ocr.algorithm.knn.TwoArrayKnnClassification;
 import com.roey.ocr.entity.Cell;
@@ -21,11 +21,11 @@ import static com.roey.ocr.util.ImageHandleUtil.getCharImageMatrix;
  * @date: 2018/10/24 16:17
  **/
 @Component
-public class Analysis {
+public class Recognition {
 
     TwoArrayKnnClassification classification = new TwoArrayKnnClassification();
 
-    public List<List<String>> analysisTable(BufferedImage image) {
+    public List<List<String>> recognizeTable(BufferedImage image) {
         List<List<String>> result = new ArrayList<>();
         List<Cell> cells = Division.divideCell(image);
         List<String> rows = new ArrayList<>();
@@ -36,7 +36,7 @@ public class Analysis {
             }
             StringBuilder values = new StringBuilder();
             for (CharArea charArea : cells.get(i).getValues()) {
-                String value = analysisChar(image, charArea);
+                String value = recognizeChar(image, charArea);
                 values.append(value);
             }
             rows.add(Compose.composeChar(values.toString()));
@@ -47,7 +47,7 @@ public class Analysis {
         return result;
     }
 
-    public String analysisChar(BufferedImage image, CharArea charArea) {
+    public String recognizeChar(BufferedImage image, CharArea charArea) {
         BufferedImage charImage = image.getSubimage(charArea.getX1(), charArea.getY1(), charArea.getWidth(), charArea.getHeight());
         int[][] unknownCharData = getCharImageMatrix(charImage);
         return classification.getTypeId(unknownCharData);
