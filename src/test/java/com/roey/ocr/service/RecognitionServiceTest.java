@@ -1,7 +1,9 @@
-package com.roey.ocr.recognition;
+package com.roey.ocr.service;
 
 import com.roey.ocr.util.ImageHandleUtil;
+import com.roey.ocr.util.ImageShowUtil;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,7 +17,10 @@ import java.util.List;
  * @author: lizhanping
  * @date: 2018/10/31 17:26
  **/
-public class RecognitionTest {
+public class RecognitionServiceTest {
+
+    @Autowired
+    private RecognitionService recognitionService;
 
     @Test
     public void recognizeTable() throws IOException {
@@ -23,10 +28,8 @@ public class RecognitionTest {
         image = ImageHandleUtil.binaryImage(image, 180);
         image = ImageHandleUtil.removeBothEnds(image);
         image = ImageHandleUtil.optimizeColumnSpace(image, 1, 2, 3);
-//        ImageShowUtil.img(image);
-        Recognition recognition = new Recognition();
-        recognition.loadSample();
-        List<List<String>> lists = recognition.recognizeTable(image);
+        ImageShowUtil.img(image);
+        List<List<String>> lists = recognitionService.recognizeTable(image);
         for (int i = 0; i < lists.size(); i++) {
             System.out.println(lists.get(i));
         }

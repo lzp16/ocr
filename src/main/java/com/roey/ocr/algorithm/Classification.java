@@ -6,6 +6,8 @@ package com.roey.ocr.algorithm;
  * @author: lizhanping
  * @date: 2018/10/30 11:03
  **/
-public interface Recognizable<T> {
+public interface Classification<T> {
     String getTypeId(T value);
+
+    void addSample(T value, String typeId);
 }

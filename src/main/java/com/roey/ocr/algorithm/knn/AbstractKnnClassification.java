@@ -1,11 +1,13 @@
 package com.roey.ocr.algorithm.knn;
 
-import com.roey.ocr.algorithm.Recognizable;
+import com.roey.ocr.algorithm.Classification;
 import com.roey.ocr.entity.Sample;
 import com.roey.ocr.entity.Score;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * KNN分类
@@ -15,8 +17,7 @@ import java.util.*;
  **/
 
 @SuppressWarnings({"rawtypes"})
-@Component
-public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
+public abstract class AbstractKnnClassification<T> implements Classification<T> {
 
     private List<Sample> dataArray;
 
@@ -36,41 +37,38 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     /**
      * 向模型中添加记录
      *
-     * @param value
-     * @param typeId
+     * @param value  样本数据
+     * @param typeId 样本标识
      */
-    public void addRecord(T value, String typeId) {
+    @Override
+    public void addSample(T value, String typeId) {
         if (dataArray == null) {
             dataArray = new ArrayList<>();
         }
-        dataArray.add(new Sample(typeId, value));
+        dataArray.add(new Sample(value, typeId));
     }
 
     /**
      * KNN分类判断value的类别
      *
-     * @param value
-     * @return
+     * @param value 样本数据
+     * @return 返回标识
      */
     @Override
     public String getTypeId(T value) {
         Score[] array = getKType(value);
-        Map<String, Integer> map = new HashMap<String, Integer>(k);
+        Map<String, Integer> map = new HashMap<>(k);
         for (Score bean : array) {
             System.out.println("=========>>" + bean.getTypeId() + "===========>>" + bean.getScore());
-            if (bean != null) {
-                if (map.containsKey(bean.getTypeId())) {
-                    map.put(bean.getTypeId(), map.get(bean.getTypeId()) + 1);
-                } else {
-                    map.put(bean.getTypeId(), 1);
-                }
+            if (map.containsKey(bean.getTypeId())) {
+                map.put(bean.getTypeId(), map.get(bean.getTypeId()) + 1);
+            } else {
+                map.put(bean.getTypeId(), 1);
             }
         }
         String maxTypeId = null;
         int maxCount = 0;
-        Iterator<Map.Entry<String, Integer>> iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, Integer> entry = iter.next();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (maxCount < entry.getValue()) {
                 maxCount = entry.getValue();
                 maxTypeId = entry.getKey();
@@ -82,8 +80,8 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     /**
      * 获取K个距离最近的分类
      *
-     * @param value
-     * @return
+     * @param value 样本数据
+     * @return 评分数组
      */
     private Score[] getKType(T value) {
         int k = 0;
@@ -121,9 +119,9 @@ public abstract class AbstractKnnClassification<T> implements Recognizable<T> {
     /**
      * o1 o2之间的相似度
      *
-     * @param o1
-     * @param o2
-     * @return
+     * @param o1 向量对象
+     * @param o2 向量对象
+     * @return 两个对象之间的距离
      */
     public abstract double similarScore(T o1, T o2);
 }

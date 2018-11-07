@@ -8,9 +8,9 @@ public class CommonUtil {
     /**
      * 以左下角为原点填充到需要的矩阵
      *
-     * @param m
-     * @param row
-     * @param column
+     * @param m      二维矩阵
+     * @param row    行长
+     * @param column 列长
      * @return
      */
     public static int[][] extMatrix(int[][] m, int row, int column) {

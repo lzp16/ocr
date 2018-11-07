@@ -1,5 +1,8 @@
 package com.roey.ocr.algorithm.knn;
 
+import com.roey.ocr.sample.SampleLoad;
+import org.springframework.stereotype.Component;
+
 import static com.roey.ocr.util.CommonUtil.extMatrix;
 
 /**
@@ -8,7 +11,12 @@ import static com.roey.ocr.util.CommonUtil.extMatrix;
  * @author: lizhanping
  * @date: 2018/10/30 10:41
  **/
+@Component
 public class TwoArrayKnnClassification extends AbstractKnnClassification<int[][]> {
+
+    public TwoArrayKnnClassification() {
+        SampleLoad.loadSampleData().forEach(sample -> addSample(sample.getValue(), sample.getTypeId()));
+    }
 
     @Override
     public double similarScore(int[][] o1, int[][] o2) {

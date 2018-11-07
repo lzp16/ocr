@@ -9,25 +9,17 @@ package com.roey.ocr.entity;
 public class Sample<T> {
 
     /**
-     * 分类ID
-     */
-    private String typeId;
-
-    /**
      * 记录值
      */
     private T value;
 
-    public Sample(String typeId, T value) {
+    /**
+     * 分类ID
+     */
+    private String typeId;
+
+    public Sample(T value, String typeId) {
         this.value = value;
-        this.typeId = typeId;
-    }
-
-    public String getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(String typeId) {
         this.typeId = typeId;
     }
 
@@ -37,5 +29,13 @@ public class Sample<T> {
 
     public void setValue(T value) {
         this.value = value;
+    }
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
     }
 }

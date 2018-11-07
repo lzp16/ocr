@@ -3,6 +3,7 @@ package com.roey.ocr.sample;
 import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.util.ImageHandleUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,7 +20,10 @@ import java.util.List;
  **/
 public class SampleGenerate {
 
-    public static void generateYzmSample(String imagePath, int grayBoundary, String tag) throws IOException {
+    @Autowired
+    private Division division;
+
+    public void generateYzmSample(String imagePath, int grayBoundary, String tag) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, grayBoundary);
         String date = LocalDate.now().toString().replace("-", "");
@@ -27,7 +31,7 @@ public class SampleGenerate {
         generateGjjOcrSample(image, dirPath, "jpg");
     }
 
-    public static void generateShenYueSample(String imagePath, int grayBoundary, int... columnIndexes) throws IOException {
+    public void generateShenYueSample(String imagePath, int grayBoundary, Integer... columnIndexes) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
         image = ImageHandleUtil.binaryImage(image, grayBoundary);
         image = ImageHandleUtil.removeBothEnds(image);
@@ -38,12 +42,12 @@ public class SampleGenerate {
     }
 
 
-    public static void generateGjjOcrSample(BufferedImage image, String dirPath, String imageType) throws IOException {
+    public void generateGjjOcrSample(BufferedImage image, String dirPath, String imageType) throws IOException {
         File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        List<CharArea> charAreas = Division.divideChar(image);
+        List<CharArea> charAreas = division.divideChar(image);
         for (int i = 0; i < charAreas.size(); i++) {
             BufferedImage charImage = image.getSubimage(charAreas.get(i).getX1(), charAreas.get(i).getY1(), charAreas.get(i).getWidth(), charAreas.get(i).getHeight());
             ImageIO.write(charImage, imageType, new File(dirPath + +i + "." + imageType));

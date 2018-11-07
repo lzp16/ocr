@@ -1,6 +1,7 @@
 package com.roey.ocr.sample;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -12,13 +13,16 @@ import java.io.IOException;
  **/
 public class SampleGenerateTest {
 
+    @Autowired
+    private SampleGenerate sampleGenerate;
+
     @Test
     public void generateShenYueSample1() throws IOException {
-        SampleGenerate.generateShenYueSample("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_7.png", 180, 1, 2, 3);
+        sampleGenerate.generateShenYueSample("C:\\Users\\B-0036\\Desktop\\ocr\\huangshi\\huangshi_7.png", 180, 1, 2, 3);
     }
 
     @Test
     public void generateYzmSample() throws IOException {
-        SampleGenerate.generateYzmSample("C:\\Users\\B-0036\\Desktop\\yzm1.jpg", 120, "test");
+        sampleGenerate.generateYzmSample("C:\\Users\\B-0036\\Desktop\\yzm1.jpg", 120, "test");
     }
 }

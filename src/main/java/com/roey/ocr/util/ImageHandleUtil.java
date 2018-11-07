@@ -4,10 +4,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.roey.ocr.util.ProjectionUtil.*;
 
 /**
  * description
@@ -186,6 +187,12 @@ public class ImageHandleUtil {
         return projection;
     }
 
+    /**
+     * 展示图片在水平或竖直方向上的投影
+     *
+     * @param image     图片
+     * @param direction 投影方向
+     */
     public static void showProjection(BufferedImage image, int direction) {
         int height;
         if (direction == 0) {
@@ -208,193 +215,6 @@ public class ImageHandleUtil {
         ImageShowUtil.img(bi);
     }
 
-    /**
-     * 分割投影波
-     *
-     * @param projections        水平或竖直方向上的投影
-     * @param minRange：波峰的最小幅度
-     * @param minWaveLen：列的最小长度
-     * @param minSpace：列间空白的最小长度
-     */
-    public static LinkedHashMap<Integer, Integer> divideProjectionWave(int[] projections, int minRange, int minWaveLen, int minSpace) {
-        LinkedHashMap<Integer, Integer> peekRange = new LinkedHashMap<>();
-        int begin = 0;
-        int end;
-        for (int i = 0; i < projections.length; i++) {
-            if (projections[i] >= minRange && begin == 0) {
-                begin = i;
-            } else if (projections[i] >= minRange && begin != 0) {
-                if (i == projections.length - 1) {
-                    end = i;
-                    if (end - begin + 1 >= minWaveLen) {
-                        peekRange.put(begin, end);
-                    }
-                }
-                continue;
-            } else if (projections[i] < minRange && begin != 0) {
-                end = i - 1;
-                boolean flag = true;
-                for (int j = i; j < i + minSpace; j++) {
-                    if (j < projections.length) {
-                        if (projections[j] >= minRange) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-                if (end - begin + 1 >= minWaveLen && flag) {
-                    peekRange.put(begin, end);
-                    begin = 0;
-                }
-            } else {
-                continue;
-            }
-        }
-        return peekRange;
-    }
-
-
-    /**
-     * 分割投影波
-     *
-     * @param projections        水平或竖直方向上的投影
-     * @param minRange：波峰的最小幅度
-     * @param minWaveLen：列的最小长度
-     * @param minSpace：列间空白的最小长度
-     */
-    public static List<Integer> divideProjectionWave2(int[] projections, int minRange, int minWaveLen, int minSpace) {
-        List<Integer> list = new ArrayList<>();
-        int begin = 0;
-        int end;
-        for (int i = 0; i < projections.length; i++) {
-            if (projections[i] >= minRange && begin == 0) {
-                begin = i;
-            } else if (projections[i] >= minRange && begin != 0) {
-                if (i == projections.length - 1) {
-                    end = i;
-                    if (end - begin + 1 >= minWaveLen) {
-                        list.add(begin);
-                        list.add(end);
-                    }
-                }
-                continue;
-            } else if (projections[i] < minRange && begin != 0) {
-                end = i - 1;
-                boolean flag = true;
-                for (int j = i; j < i + minSpace; j++) {
-                    if (j < projections.length) {
-                        if (projections[j] >= minRange) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-                if (end - begin + 1 >= minWaveLen && flag) {
-                    list.add(begin);
-                    list.add(end);
-                    begin = 0;
-                }
-            } else {
-                continue;
-            }
-        }
-        return list;
-    }
-
-    /**
-     * 分割投影波
-     *
-     * @param projections              水平或竖直方向上的投影
-     * @param minRange：最小波幅
-     * @param minWaveLen：最小波长
-     * @param minWaveSpace：最小波间隔
-     * @param minWaveGroupSpace：最小波组间隔
-     */
-    public static List<List<Integer>> divideProjectionWaveExt(int[] projections, int minRange, int minWaveLen, int minWaveSpace, int minWaveGroupSpace) {
-        List<List<Integer>> result = new ArrayList<>();
-        int begin = -1;
-        int end = 0;
-        int space = 0;
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < projections.length; i++) {
-            if (projections[i] >= minRange) {
-                if (begin == -1 || space >= minWaveSpace) {
-                    begin = i;
-                }
-                for (; i < projections.length; i++) {
-                    if (i == (projections.length - 1)) {
-                        if (projections[i] < minRange) {
-                            end = i - 1;
-                            if (end - begin + 1 >= minWaveLen) {
-                                list.add(begin);
-                                list.add(end);
-                            }
-                            result.add(list);
-                        } else {
-                            end = i;
-                            if (end - begin + 1 >= minWaveLen) {
-                                list.add(begin);
-                                list.add(end);
-                            }
-                            result.add(list);
-                        }
-                        break;
-                    }
-                    if (projections[i] < minRange) {
-                        break;
-                    }
-                }
-            }
-            if (i == (projections.length - 1)) {
-                break;
-            }
-            space = 0;
-            if (projections[i] < minRange) {
-                for (; i < projections.length; i++) {
-                    if (i == (projections.length - 1)) {
-                        if (projections[i] < minRange) {
-                            end = i - (space + 1);
-                            if (end - begin + 1 >= minWaveLen) {
-                                list.add(begin);
-                                list.add(end);
-                            }
-                            result.add(list);
-                        } else {
-                            end = i - 1 - space;
-                            if (end - begin + 1 >= minWaveLen) {
-                                list.add(begin);
-                                list.add(end);
-                            }
-                            result.add(list);
-                        }
-                        break;
-                    }
-                    if (projections[i] >= minRange) {
-                        i--;
-                        break;
-                    } else {
-                        space++;
-                    }
-                }
-            }
-            if (i == (projections.length - 1)) {
-                break;
-            }
-            if (space >= minWaveSpace) {
-                end = i - space;
-                if (end - Math.abs(begin) + 1 >= minWaveLen) {
-                    list.add(begin);
-                    list.add(end);
-                    if (space >= minWaveGroupSpace) {
-                        result.add(list);
-                        list = new ArrayList<>();
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     public static BufferedImage removeBothEnds(BufferedImage image) {
         int[] ints = imageProjection(image, 0);
         List<Integer> integers = divideProjectionWave2(ints, 1, 6, 3);
@@ -413,7 +233,7 @@ public class ImageHandleUtil {
         return image.getSubimage(0, head, image.getWidth(), tail - head + 1);
     }
 
-    public static BufferedImage optimizeColumnSpace(BufferedImage image, int... coluwnIndexes) {
+    public static BufferedImage optimizeColumnSpace(BufferedImage image, Integer... coluwnIndexes) {
         int[] projections = imageProjection(image, VERTICAL);
         Map<Integer, Integer> characterBorders = divideProjectionWave(projections, 1, 16, 6);
         if (coluwnIndexes.length > 0) {
@@ -470,26 +290,6 @@ public class ImageHandleUtil {
 
         }
         return data;
-    }
-
-    public static int edgeDetection(int[] data, boolean left) {
-        int result = 0;
-        if (left) {
-            for (int i = 0; i < data.length; i++) {
-                if (data[i] != 0) {
-                    result = i;
-                    break;
-                }
-            }
-        } else {
-            for (int i = data.length - 1; i >= 0; i--) {
-                if (data[i] != 0) {
-                    result = i;
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
 

@@ -1,25 +1,26 @@
 package com.roey.ocr.sample;
 
-import com.roey.ocr.recognition.Recognition;
 import com.roey.ocr.entity.Sample;
+import com.roey.ocr.service.RecognitionService;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.roey.ocr.util.ImageHandleUtil.getCharImageMatrix;
 
 /**
  * Created by LiZhanPing on 2018/10/29.
  */
-public class SampleLoad<T> {
+public class SampleLoad {
 
     public static List<Sample<int[][]>> loadSampleData() {
         List<Sample<int[][]>> samples = new ArrayList<>();
 
-        String basePath = Recognition.class.getClassLoader().getResource(".").getFile() + "charsample/shenyue/";
+        String basePath = Objects.requireNonNull(RecognitionService.class.getClassLoader().getResource(".")).getFile() + "charsample/shenyue/";
         basePath = basePath.replace("test-classes", "classes");
         samples.addAll(getSampleValue("序", basePath + "xu"));
         samples.addAll(getSampleValue("号", basePath + "hao"));
@@ -104,14 +105,14 @@ public class SampleLoad<T> {
         return samples;
     }
 
-    public static List<Sample<int[][]>> getSampleValue(String typeId, String path) {
+    private static List<Sample<int[][]>> getSampleValue(String typeId, String path) {
         List<Sample<int[][]>> result = new ArrayList<>();
         File rootFile = new File(path);
         File[] files = rootFile.listFiles();
         try {
-            for (int i = 0; i < files.length; i++) {
-                BufferedImage image = ImageIO.read(files[i]);
-                result.add(new Sample<>(typeId, getCharImageMatrix(image)));
+            for (File file : Objects.requireNonNull(files)) {
+                BufferedImage image = ImageIO.read(file);
+                result.add(new Sample<>(getCharImageMatrix(image), typeId));
             }
         } catch (Exception e) {
             System.out.println(path);
