@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -109,23 +110,40 @@ public class SampleLoad {
     }
 
     private static List<Sample<int[][]>> getSampleValue(String typeId, String dirName) {
-        String path = SampleLoad.class.getResource("/").getPath();
-        path = path.substring(0, path.indexOf("!")).replace("file:/", "");
         List<Sample<int[][]>> result = new ArrayList<>();
-        try {
-            JarFile localJarFile = new JarFile(path);
-            Enumeration<JarEntry> entries = localJarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                String innerPath = jarEntry.getName().replace("BOOT-INF/classes/", "");
-                if (innerPath.contains("charsample/shenyue/" + dirName + "/") && !innerPath.endsWith("charsample/shenyue/" + dirName + "/")) {
-                    InputStream resourceAsStream = SampleLoad.class.getClassLoader().getResourceAsStream(innerPath);
-                    BufferedImage image = ImageIO.read(resourceAsStream);
+        String path = SampleLoad.class.getResource("/").getPath();
+        //有感叹号代表是jar/war包下加载，无感叹号代表是编译器中运行
+        if (!path.contains("!")) {
+            path = path.replace("test-classes", "classes");
+            path = path + "charsample/shenyue/" + dirName;
+            File rootFile = new File(path);
+            File[] files = rootFile.listFiles();
+            try {
+                for (File file : files) {
+                    BufferedImage image = ImageIO.read(file);
                     result.add(new Sample<>(getCharImageMatrix(image), typeId));
                 }
+            } catch (Exception e) {
+                throw new WrongInfoException("加载训练样本异常！");
             }
-        } catch (IOException e) {
-            throw new WrongInfoException("加载训练样本异常！");
+        } else {
+            System.out.println(path);
+            path = path.substring(0, path.indexOf("!")).replace("file:/", "");
+            try {
+                JarFile localJarFile = new JarFile(path);
+                Enumeration<JarEntry> entries = localJarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry jarEntry = entries.nextElement();
+                    String innerPath = jarEntry.getName().replace("BOOT-INF/classes/", "");
+                    if (innerPath.contains("charsample/shenyue/" + dirName + "/") && !innerPath.endsWith("charsample/shenyue/" + dirName + "/")) {
+                        InputStream resourceAsStream = SampleLoad.class.getClassLoader().getResourceAsStream(innerPath);
+                        BufferedImage image = ImageIO.read(resourceAsStream);
+                        result.add(new Sample<>(getCharImageMatrix(image), typeId));
+                    }
+                }
+            } catch (IOException e) {
+                throw new WrongInfoException("加载训练样本异常！");
+            }
         }
         return result;
     }
