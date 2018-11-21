@@ -29,102 +29,43 @@ public class ImageHandleUtil {
     //纵向
     public final static int VERTICAL = 1;
 
-    /**
-     * 图片二值化
-     *
-     * @param image 原始图片
-     * @return BufferedImage
-     */
-    public static BufferedImage binaryImage(BufferedImage image) {
-        if (image == null) {
-            return null;
-        }
-        int width = image.getWidth();
-        int height = image.getHeight();
-        BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int rgb = image.getRGB(i, j);
-                grayImage.setRGB(i, j, rgb);
-            }
-        }
-        return grayImage;
-    }
 
-    /**
-     * 拼接图片
-     *
-     * @param isHorizontal true代表水平拼接，fasle代表垂直拼接
-     * @param imgs         待拼接的图片数组
-     * @return BufferedImage
-     */
-    public static BufferedImage mergeImage(boolean isHorizontal, BufferedImage... imgs) {
-        // 生成新图片
-        BufferedImage destImage;
-        // 计算新图片的长和高
-        int allw = 0, allh = 0, allwMax = 0, allhMax = 0;
-        // 获取总长、总宽、最长、最宽
-        for (BufferedImage img : imgs) {
-            allw += img.getWidth();
-            allh += img.getHeight();
-            if (img.getWidth() > allwMax) {
-                allwMax = img.getWidth();
-            }
-            if (img.getHeight() > allhMax) {
-                allhMax = img.getHeight();
-            }
-        }
-        // 创建新图片
-        if (isHorizontal) {
-            destImage = new BufferedImage(allw, allhMax, BufferedImage.TYPE_INT_RGB);
-        } else {
-            destImage = new BufferedImage(allwMax, allh, BufferedImage.TYPE_INT_RGB);
-        }
-        // 合并所有子图片到新图片
-        int wx = 0, wy = 0;
-        for (BufferedImage img : imgs) {
-            int w1 = img.getWidth();
-            int h1 = img.getHeight();
-            // 从图片中读取RGB
-            int[] imageArrayOne = new int[w1 * h1];
-            // 逐行扫描图像中各个像素的RGB到数组中
-            imageArrayOne = img.getRGB(0, 0, w1, h1, imageArrayOne, 0, w1);
-            // 水平方向合并
-            if (isHorizontal) {
-                // 设置上半部分或左半部分的RGB
-                destImage.setRGB(wx, 0, w1, h1, imageArrayOne, 0, w1);
-                // 垂直方向合并
-            } else {
-                // 设置上半部分或左半部分的RGB
-                destImage.setRGB(0, wy, w1, h1, imageArrayOne, 0, w1);
-            }
-            wx += w1;
-            wy += h1;
-        }
-        return destImage;
+    public static BufferedImage binaryImage(BufferedImage image) {
+        int grayBoundary = getGrayBoundaryByOstu(image);
+        return binaryImage(image, grayBoundary);
     }
 
     public static BufferedImage binaryImage(BufferedImage image, int grayBoundary) {
-        int h = image.getHeight();
+        image = getGrayImage(image);
+        ImageShowUtil.img(image);
         int w = image.getWidth();
-        // 构造一个类型为预定义图像类型之一的 BufferedImage，TYPE_BYTE_BINARY（表示一个不透明的以字节打包的 1、2 或 4 位图像。）
-        BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_BINARY);
+        int h = image.getHeight();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (getImageRgb(image.getRGB(i, j)) > grayBoundary) {
-                    int black = new Color(255, 255, 255).getRGB();
-                    bufferedImage.setRGB(i, j, black);
+                if (getAvgRgb(image.getRGB(i, j)) > grayBoundary) {
+                    image.setRGB(i, j, Color.WHITE.getRGB());
                 } else {
-                    int white = new Color(0, 0, 0).getRGB();
-                    bufferedImage.setRGB(i, j, white);
+                    image.setRGB(i, j, Color.BLACK.getRGB());
                 }
             }
-
         }
-        return bufferedImage;
+        return image;
     }
 
-    private static int getImageRgb(int i) {
+    private static BufferedImage getGrayImage(BufferedImage image) {
+        int h = image.getHeight();
+        int w = image.getWidth();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                int avgRgb = getAvgRgb(image.getRGB(i, j));
+                int rgb = new Color(avgRgb, avgRgb, avgRgb).getRGB();
+                image.setRGB(i, j, rgb);
+            }
+        }
+        return image;
+    }
+
+    private static int getAvgRgb(int i) {
         // 将十进制的颜色值转为十六进制
         String argb = Integer.toHexString(i);
         // argb分别代表透明,红,绿,蓝 分别占16进制2位
@@ -133,6 +74,63 @@ public class ImageHandleUtil {
         int g = Integer.parseInt(argb.substring(4, 6), 16);
         int b = Integer.parseInt(argb.substring(6, 8), 16);
         return ((r + g + b) / 3);
+    }
+
+    /**
+     * 获得灰度值
+     * 最大类间方差法
+     *
+     * @param image
+     */
+    public static int getGrayBoundaryByOstu(BufferedImage image) {
+        int grayLevel = 256;
+        int[] pixelNum = new int[grayLevel];
+        //计算所有色阶的直方图
+        int width = image.getWidth();
+        int height = image.getHeight();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int color = getAvgRgb(image.getRGB(x, y));
+                pixelNum[color]++;
+            }
+        }
+
+        double sum = 0;
+        int total = 0;
+        for (int i = 0; i < grayLevel; i++) {
+            sum += i * pixelNum[i]; //x*f(x)质量矩，也就是每个灰度的值乘以其点数（归一化后为概率），sum为其总和
+            total += pixelNum[i]; //n为图象总的点数，归一化后就是累积概率
+        }
+        double sumB = 0;//前景色质量矩总和
+        int threshold = 0;
+        double wF = 0;//前景色权重
+        double wB = 0;//背景色权重
+
+        double maxFreq = -1.0;//最大类间方差
+
+        for (int i = 0; i < grayLevel; i++) {
+            wB += pixelNum[i]; //wB为在当前阈值背景图象的点数
+            if (wB == 0) { //没有分出前景后景
+                continue;
+            }
+
+            wF = total - wB; //wB为在当前阈值前景图象的点数
+            if (wF == 0) {//全是前景图像，则可以直接break
+                break;
+            }
+
+            sumB += (double) (i * pixelNum[i]);
+            double meanB = sumB / wB;
+            double meanF = (sum - sumB) / wF;
+            //freq为类间方差
+            double freq = (wF) * (wB) * (meanB - meanF) * (meanB - meanF);
+            if (freq > maxFreq) {
+                maxFreq = freq;
+                threshold = i;
+            }
+        }
+
+        return threshold;
     }
 
     /**
@@ -152,67 +150,6 @@ public class ImageHandleUtil {
         g.dispose();
         return newImage;
 
-    }
-
-    /**
-     * 图像投影
-     *
-     * @param image     图片
-     * @param direction 投影方向，0是水平投影，1是竖直投影
-     * @return 数组
-     */
-    public static int[] imageProjection(BufferedImage image, int direction) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[] projection;
-        if (direction == 0) {
-            projection = new int[height];
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    if (image.getRGB(x, y) != -1) {
-                        projection[y]++;
-                    }
-                }
-            }
-        } else {
-            projection = new int[width];
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    if (image.getRGB(x, y) != -1) {
-                        projection[x]++;
-                    }
-                }
-            }
-        }
-        return projection;
-    }
-
-    /**
-     * 展示图片在水平或竖直方向上的投影
-     *
-     * @param image     图片
-     * @param direction 投影方向
-     */
-    public static void showProjection(BufferedImage image, int direction) {
-        int height;
-        if (direction == 0) {
-            height = image.getHeight();
-        } else {
-            height = image.getWidth();
-        }
-        int[] projections = imageProjection(image, direction);
-        int width = projections.length;
-        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
-        Graphics graphics = bi.getGraphics();
-        Graphics2D g2d = (Graphics2D) graphics;
-        g2d.setPaint(Color.WHITE);
-        g2d.fillRect(0, 0, width, height);
-        graphics.setColor(Color.black);
-        for (int i = 0; i < width; i++) {
-            graphics.drawLine(i, height, i, (height - projections[i]));
-        }
-        graphics.dispose();
-        ImageShowUtil.img(bi);
     }
 
     public static BufferedImage removeBothEnds(BufferedImage image) {
@@ -268,6 +205,92 @@ public class ImageHandleUtil {
         return mergeImage(true, bufferedImages);
     }
 
+    /**
+     * 图像投影
+     *
+     * @param image     图片
+     * @param direction 投影方向，0是水平投影，1是竖直投影
+     * @return 数组
+     */
+    public static int[] imageProjection(BufferedImage image, int direction) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[] projection;
+        if (direction == 0) {
+            projection = new int[height];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (image.getRGB(x, y) != -1) {
+                        projection[y]++;
+                    }
+                }
+            }
+        } else {
+            projection = new int[width];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    if (image.getRGB(x, y) != -1) {
+                        projection[x]++;
+                    }
+                }
+            }
+        }
+        return projection;
+    }
+
+    /**
+     * 拼接图片
+     *
+     * @param isHorizontal true代表水平拼接，fasle代表垂直拼接
+     * @param imgs         待拼接的图片数组
+     * @return BufferedImage
+     */
+    public static BufferedImage mergeImage(boolean isHorizontal, BufferedImage... imgs) {
+        // 生成新图片
+        BufferedImage destImage;
+        // 计算新图片的长和高
+        int allw = 0, allh = 0, allwMax = 0, allhMax = 0;
+        // 获取总长、总宽、最长、最宽
+        for (BufferedImage img : imgs) {
+            allw += img.getWidth();
+            allh += img.getHeight();
+            if (img.getWidth() > allwMax) {
+                allwMax = img.getWidth();
+            }
+            if (img.getHeight() > allhMax) {
+                allhMax = img.getHeight();
+            }
+        }
+        // 创建新图片
+        if (isHorizontal) {
+            destImage = new BufferedImage(allw, allhMax, BufferedImage.TYPE_INT_RGB);
+        } else {
+            destImage = new BufferedImage(allwMax, allh, BufferedImage.TYPE_INT_RGB);
+        }
+        // 合并所有子图片到新图片
+        int wx = 0, wy = 0;
+        for (BufferedImage img : imgs) {
+            int w1 = img.getWidth();
+            int h1 = img.getHeight();
+            // 从图片中读取RGB
+            int[] imageArrayOne = new int[w1 * h1];
+            // 逐行扫描图像中各个像素的RGB到数组中
+            imageArrayOne = img.getRGB(0, 0, w1, h1, imageArrayOne, 0, w1);
+            // 水平方向合并
+            if (isHorizontal) {
+                // 设置上半部分或左半部分的RGB
+                destImage.setRGB(wx, 0, w1, h1, imageArrayOne, 0, w1);
+                // 垂直方向合并
+            } else {
+                // 设置上半部分或左半部分的RGB
+                destImage.setRGB(0, wy, w1, h1, imageArrayOne, 0, w1);
+            }
+            wx += w1;
+            wy += h1;
+        }
+        return destImage;
+    }
+
     public static int[][] getCharImageMatrix(BufferedImage image) {
         int[] hp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.HORIZONTAL);
         int[] vp = ImageHandleUtil.imageProjection(image, ImageHandleUtil.VERTICAL);
@@ -292,10 +315,38 @@ public class ImageHandleUtil {
         return data;
     }
 
+    /**
+     * 展示图片在水平或竖直方向上的投影
+     *
+     * @param image     图片
+     * @param direction 投影方向
+     */
+    public static void showProjection(BufferedImage image, int direction) {
+        int height;
+        if (direction == 0) {
+            height = image.getHeight();
+        } else {
+            height = image.getWidth();
+        }
+        int[] projections = imageProjection(image, direction);
+        int width = projections.length;
+        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
+        Graphics graphics = bi.getGraphics();
+        Graphics2D g2d = (Graphics2D) graphics;
+        g2d.setPaint(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+        graphics.setColor(Color.black);
+        for (int i = 0; i < width; i++) {
+            graphics.drawLine(i, height, i, (height - projections[i]));
+        }
+        graphics.dispose();
+        ImageShowUtil.img(bi);
+    }
 
     public static void main(String[] args) throws Exception {
-        BufferedImage image1 = ImageIO.read(new File("C:\\Users\\B-0036\\Desktop\\yzm1.jpg"));
-        image1 = binaryImage(image1, 120);
+        BufferedImage image1 = ImageIO.read(new File("C:\\Users\\15886\\Desktop\\captcha.jpg"));
+//        BufferedImage image1 = ImageIO.read(new File("E:\\ganzhou.png"));
+        image1 = binaryImage(image1);
         ImageShowUtil.img(image1);
 
 //        showProjection(image1, 1);
