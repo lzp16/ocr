@@ -184,7 +184,9 @@ public class ImageHandleUtil {
                     index++;
                 }
             }
-            characterBorders = newCharacterBorders;
+            if (newCharacterBorders.size() > 0) {
+                characterBorders = newCharacterBorders;
+            }
         }
         BufferedImage[] bufferedImages = new BufferedImage[characterBorders.size() * 3];
         BufferedImage fillImage = new BufferedImage(16, image.getHeight(), BufferedImage.TYPE_INT_ARGB);

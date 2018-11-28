@@ -96,6 +96,12 @@ public class SampleLoad {
         samples.addAll(getSampleValue("duo", "duo"));
         samples.addAll(getSampleValue("yi", "yi3"));
         samples.addAll(getSampleValue("bo", "bo"));
+        samples.addAll(getSampleValue("无", "wu2"));
+        samples.addAll(getSampleValue("数", "shu"));
+        samples.addAll(getSampleValue("据", "ju"));
+        samples.addAll(getSampleValue("户", "hu"));
+        samples.addAll(getSampleValue("资", "zi"));
+        samples.addAll(getSampleValue("移", "yi2"));
 
         samples.addAll(getSampleValue("共", "gong2"));
         samples.addAll(getSampleValue("条", "tiao"));
@@ -127,7 +133,7 @@ public class SampleLoad {
                 throw new WrongInfoException("加载训练样本异常！");
             }
         } else {
-            System.out.println(path);
+            log.info(path);
             path = path.substring(0, path.indexOf("!")).replace("file:/", "");
             try {
                 JarFile localJarFile = new JarFile(path);

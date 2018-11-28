@@ -4,6 +4,7 @@ import com.roey.ocr.entity.CharArea;
 import com.roey.ocr.preprocess.Division;
 import com.roey.ocr.util.ImageHandleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author: lizhanping
  * @date: 2018/10/24 16:56
  **/
+@Component
 public class SampleGenerate {
 
     @Autowired

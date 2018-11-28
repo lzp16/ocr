@@ -1,5 +1,7 @@
 package com.roey.ocr.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,7 @@ import java.io.IOException;
 /**
  * Created by rongkang on 2017-07-02.
  */
+@Slf4j
 public class ImageShowUtil {
 
     static {
@@ -41,7 +44,7 @@ public class ImageShowUtil {
     }
 
     public static String text(String msg) {
-        System.out.println(msg);
+        log.info(msg);
         return (String) JOptionPane.showInputDialog(null, msg, "", JOptionPane.QUESTION_MESSAGE, null, null, null);
     }
 }

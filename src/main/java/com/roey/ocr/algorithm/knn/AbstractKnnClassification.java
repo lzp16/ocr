@@ -1,8 +1,10 @@
 package com.roey.ocr.algorithm.knn;
 
+import com.alibaba.fastjson.JSONObject;
 import com.roey.ocr.algorithm.Classification;
 import com.roey.ocr.entity.Sample;
 import com.roey.ocr.entity.Score;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.Map;
  **/
 
 @SuppressWarnings({"rawtypes"})
+@Slf4j
 public abstract class AbstractKnnClassification<T> implements Classification<T> {
 
     private List<Sample> dataArray;
@@ -59,7 +62,9 @@ public abstract class AbstractKnnClassification<T> implements Classification<T> 
         Score[] array = getKType(value);
         Map<String, Integer> map = new HashMap<>(k);
         for (Score bean : array) {
-            System.out.println("=========>>" + bean.getTypeId() + "===========>>" + bean.getScore());
+            if (bean.getScore() > 0) {
+                log.info(JSONObject.toJSONString(bean));
+            }
             if (map.containsKey(bean.getTypeId())) {
                 map.put(bean.getTypeId(), map.get(bean.getTypeId()) + 1);
             } else {

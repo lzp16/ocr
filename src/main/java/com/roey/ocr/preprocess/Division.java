@@ -79,6 +79,7 @@ public class Division {
         return cells;
     }
 
+
     public void showDivision(BufferedImage image) {
         List<CharArea> divides = divideChar(image);
         Graphics graphics = image.getGraphics();
