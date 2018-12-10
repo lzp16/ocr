@@ -65,8 +65,6 @@ public class SampleLoad {
         samples.addAll(getSampleValue("7", "7"));
         samples.addAll(getSampleValue("8", "8"));
         samples.addAll(getSampleValue("9", "9"));
-        samples.addAll(getSampleValue("sandianshui", "sandianshui"));
-        samples.addAll(getSampleValue("fang", "fang3"));
         samples.addAll(getSampleValue("汇", "hui"));
         samples.addAll(getSampleValue("缴", "jiao"));
         samples.addAll(getSampleValue("年", "nian"));
@@ -92,16 +90,22 @@ public class SampleLoad {
         samples.addAll(getSampleValue("它", "ta"));
         samples.addAll(getSampleValue("内", "nei"));
         samples.addAll(getSampleValue("转", "zhuan"));
-        samples.addAll(getSampleValue("he", "he2"));
-        samples.addAll(getSampleValue("duo", "duo"));
-        samples.addAll(getSampleValue("yi", "yi3"));
-        samples.addAll(getSampleValue("bo", "bo"));
         samples.addAll(getSampleValue("无", "wu2"));
         samples.addAll(getSampleValue("数", "shu"));
         samples.addAll(getSampleValue("据", "ju"));
         samples.addAll(getSampleValue("户", "hu"));
         samples.addAll(getSampleValue("资", "zi"));
         samples.addAll(getSampleValue("移", "yi2"));
+
+        //偏旁部首
+        samples.addAll(getSampleValue("sandianshui", "sandianshui"));
+        samples.addAll(getSampleValue("fang", "fang3"));
+        samples.addAll(getSampleValue("he", "he2"));
+        samples.addAll(getSampleValue("duo", "duo"));
+        samples.addAll(getSampleValue("yi", "yi3"));
+        samples.addAll(getSampleValue("bo", "bo"));
+        samples.addAll(getSampleValue("chang", "chang2"));
+        samples.addAll(getSampleValue("bei", "bei"));
 
         samples.addAll(getSampleValue("共", "gong2"));
         samples.addAll(getSampleValue("条", "tiao"));

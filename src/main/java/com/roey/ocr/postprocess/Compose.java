@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Compose {
     public String composeChar(String str) {
-        return str.replace("sandianshuifang", "汇").replace("heduo", "移").replace("yibo", "补");
+        return str.replace("sandianshuifang", "汇").replace("heduo", "移").replace("yibo", "补").replace("beichang", "账");
     }
 }
